@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, *('doc', 'README.rst'))) as f:
     README = f.read()
-with open(os.path.join(here, 'Changelog')) as f:
+with open(os.path.join(here, 'CHANGELOG')) as f:
     CHANGES = f.read()
 
 requires = [
