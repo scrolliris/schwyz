@@ -1,6 +1,7 @@
 import os
 import sys
 
+import cherrypy
 from pyramid.paster import (
     get_app,
     setup_logging
@@ -28,9 +29,17 @@ def main(argv=sys.argv, quiet=False):
     wsgi_app = get_app(config)
     setup_logging(config)
 
-    from paste.script.cherrypy_server import cpwsgi_server
-    cpwsgi_server(wsgi_app, host=env.host, port=env.port,
-                  numthreads=10, request_queue_size=100)
+    cherrypy.tree.graft(wsgi_app, '/')
+
+    cherrypy.server.unsubscribe()
+    server = cherrypy._cpserver.Server()
+    server.socket_host = env.host
+    server.socket_port = env.port
+    server.thread_pool = 30
+    server.subscribe()
+
+    cherrypy.engine.start()
+    cherrypy.engine.block()
 
 
 if __name__ == '__main__':
