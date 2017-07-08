@@ -1,0 +1,28 @@
+{
+  "name": "puteoli",
+  "description": "https://{script|widget}.scrolliris.io/",
+  "version": "0.0.1",
+  "private": true,
+  "engines": {
+    "node": "7.8.0",
+    "npm": "~5.3.0"
+  },
+  "scripts": {
+    "test": "node --version",
+    "postinstall": "gulp"
+  },
+  "dependencies": {
+    "@lupine-software/scrolliris-readability-tracker": "0.0.3"
+  },
+  "devDependencies": {
+    "gulp": "3.9.1",
+    "gulp-clean": "0.3.2",
+    "gulp-env": "0.4.0",
+    "gulp-rename": "1.2.2",
+    "npm": "5.0.3",
+    "run-sequence": "1.2.2"
+  },
+  "cacheDirectories": [
+    "node_modules"
+  ]
+}

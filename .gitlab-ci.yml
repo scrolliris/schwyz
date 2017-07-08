@@ -1,0 +1,64 @@
+stages:
+  - build-assets
+  - check-style
+  - run-test
+
+build:
+  stage: build-assets
+  image: node:7.8.0
+  variables:
+    NODE_ENV: production
+  before_script:
+    - node --version
+    - npm --version
+    - npm install --ignore-scripts
+  script:
+    - node_modules/.bin/gulp
+  cache:
+    untracked: true
+    paths:
+      - node_modules
+  except:
+    - tags
+
+check:
+  stage: check-style
+  image: python:3.5
+  variables:
+    ENV: development
+    PIP_CACHE_DIR: pip-cache
+  before_script:
+    - python --version
+    - pip --version
+    - pip install --upgrade pip setuptools
+  script:
+    - make clean
+    - make setup
+    - make check
+  cache:
+    untracked: true
+    paths:
+      - pip-cache
+  except:
+    - tags
+
+test:
+  stage: run-test
+  image: python:3.5
+  variables:
+    ENV: test
+    PIP_CACHE_DIR: pip-cache
+  before_script:
+    - python --version
+    - pip --version
+    - pip install --upgrade pip setuptools
+  script:
+    - make clean
+    - make setup
+    - make coverage
+  cache:
+    untracked: true
+    paths:
+      - pip-cache
+  except:
+    - tags

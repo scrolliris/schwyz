@@ -1,0 +1,20 @@
+#!/bin/sh
+set -x
+
+DIR_NAME=$(dirname $(dirname $(readlink -f $0)))
+ENV_FILE=".env.ci"
+ENV_OPTS="";
+
+if [ ! -f "$ENV_FILE" ]; then
+  echo "Please create \`$ENV_FILE\` (variables)"
+  exit 2
+fi
+
+while read line; do
+ENV_OPTS+=" --env $line"
+done < "$ENV_FILE"
+
+# ci-runner test
+echo "$ENV_OPTS $1" | xargs ${DIR_NAME}/bin/gitlab-ci-multi-runner exec docker \
+  --cache-dir /cache \
+  --docker-volumes ${DIR_NAME}/build-output:/cache

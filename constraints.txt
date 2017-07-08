@@ -1,0 +1,21 @@
+colorlog==2.10.0
+Paste==2.0.3
+PasteScript==2.0.2
+python-dotenv==0.6.4
+pyramid==1.9
+pyramid_assetviews==1.0a3
+pyramid-mako==1.0.2
+
+# production
+CherryPy==10.2.2
+raven==6.1.0
+
+# development
+flake8==3.3.0
+pylint==1.7.2
+waitress==1.0.2
+
+# testing
+pytest==3.1.3
+pytest-cov==2.5.1
+WebTest==2.0.27
