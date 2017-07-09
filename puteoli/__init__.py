@@ -10,7 +10,7 @@ from pyramid.config import Configurator
 from pyramid.response import Response
 from pyramid.view import view_config
 from pyramid.threadlocal import get_current_registry
-from pyramid.view import notfound_view_config
+from pyramid.view import forbidden_view_config, notfound_view_config
 import pyramid.httpexceptions as exc
 
 from .env import Env
@@ -89,6 +89,14 @@ def notfound(req):
     return dict()
 
 
+@forbidden_view_config(renderer=tpl('403'))
+def forbidden(req):
+    """403 Forbidden Error.
+    """
+    req.response.status = 403
+    return dict()
+
+
 @view_config(context=exc.HTTPInternalServerError, renderer='string')
 def internal_server_error(req):
     """Internal Server Error.
@@ -101,11 +109,23 @@ def internal_server_error(req):
              renderer=tpl_js('tracker-browser'),
              request_method='GET')
 def tracker(req):
-    """Tracker Script.
+    """Returns a tracker script for valid request.
     """
+    if 'api_key' not in req.params:
+        raise exc.HTTPForbidden()
+
+    project_id = req.matchdict['project_id']
+    scroll_key = req.params['api_key']
+
+    # FIXME
+    logger.info('project_id -> %s', project_id)
+    logger.info('scroll_key -> %s', scroll_key)
+
     res = req.response
     res.content_type = 'text/javascript'
-    res.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    res.headers['Cache-Control'] = 'no-cache,no-store,must-revalidate'
+    res.headers['Pragma'] = 'no-cache'
+    res.headers['Expires'] = '0'
     return dict()
 
 
@@ -131,7 +151,16 @@ def main(_, **settings):
         config.add_asset_views(
             STATIC_DIR, filenames=filenames, http_cache=cache_max_age)
 
-    config.add_route('tracker', '/tracker.js')  # overview
+    def project_id_predicator(info, request):
+        if info['route'].name in ('tracker', 'reflector'):
+            # FIXME:
+            return info['match']['project_id'] == 'development'
+
+    config.add_route(
+        'tracker',
+        '/projects/{project_id}/tracker.js',
+        custom_predicates=(project_id_predicator,)
+    )
 
     config.scan()
     app = config.make_wsgi_app()
