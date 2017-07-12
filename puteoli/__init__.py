@@ -7,6 +7,7 @@ from wsgiref.handlers import BaseHandler
 
 from paste.translogger import TransLogger
 from pyramid.config import Configurator
+from pyramid.renderers import render
 from pyramid.response import Response
 from pyramid.view import view_config
 from pyramid.threadlocal import get_current_registry
@@ -71,10 +72,10 @@ def tpl(filename):
     return './templates/{0:s}.mako'.format(filename)
 
 
-def tpl_js(filename):
-    """JS Template Utility.
+def tpl_dst(filename, extname='js'):
+    """{JS|CSS} Template Utility.
     """
-    return STATIC_DIR + '/dist/{0:s}.min.js.mako'.format(filename)
+    return STATIC_DIR + '/dist/{0:s}.min.{1:s}.mako'.format(filename, extname)
 
 
 # -- views
@@ -106,7 +107,7 @@ def internal_server_error(req):
 
 
 @view_config(route_name='tracker',
-             renderer=tpl_js('tracker-browser'),
+             renderer=tpl_dst('tracker-browser', 'js'),
              request_method='GET')
 def tracker(req):
     """Returns a tracker script for valid request.
@@ -127,6 +128,60 @@ def tracker(req):
     res.headers['Pragma'] = 'no-cache'
     res.headers['Expires'] = '0'
     return dict()
+
+
+@view_config(route_name='reflector',
+             renderer=tpl_dst('reflector-browser', 'js'),
+             request_method='GET')
+def reflector(req):
+    """Returns a reflector script for valid request.
+    """
+    if 'api_key' not in req.params:
+        raise exc.HTTPForbidden()
+
+    project_id = req.matchdict['project_id']
+    scroll_key = req.params['api_key']
+
+    # FIXME
+    logger.info('project_id -> %s', project_id)
+    logger.info('scroll_key -> %s', scroll_key)
+
+    res = req.response
+    res.content_type = 'text/javascript'
+    res.headers['Cache-Control'] = 'no-cache,no-store,must-revalidate'
+    res.headers['Pragma'] = 'no-cache'
+    res.headers['Expires'] = '0'
+    return dict()
+
+
+@view_config(route_name='reflector_canvas',
+             request_method='GET')
+def reflector_canvas(req):
+    """Returns a reflector canvas for valid request.
+    """
+    if 'api_key' not in req.params:
+        raise exc.HTTPForbidden()
+
+    if req.matchdict['ext'] not in ('js', 'css'):
+        raise exc.HTTPForbidden()
+
+    ext = req.matchdict['ext']
+    project_id = req.matchdict['project_id']
+    scroll_key = req.params['api_key']
+
+    # FIXME
+    logger.info('ext -> %s', ext)
+    logger.info('project_id -> %s', project_id)
+    logger.info('scroll_key -> %s', scroll_key)
+
+    result = render(tpl_dst('reflector-browser-canvas', ext), {}, req)
+    res = Response(result)
+    res.content_type = 'text/{0:s}'.format(
+        'javascript' if ext == 'js' else 'css')
+    res.headers['Cache-Control'] = 'no-cache,no-store,must-revalidate'
+    res.headers['Pragma'] = 'no-cache'
+    res.headers['Expires'] = '0'
+    return res
 
 
 # -- main
@@ -152,13 +207,25 @@ def main(_, **settings):
             STATIC_DIR, filenames=filenames, http_cache=cache_max_age)
 
     def project_id_predicator(info, request):
-        if info['route'].name in ('tracker', 'reflector'):
+        if info['route'].name in ('tracker', 'reflector', 'reflector_canvas'):
             # FIXME:
             return info['match']['project_id'] == 'development'
 
     config.add_route(
         'tracker',
         '/projects/{project_id}/tracker.js',
+        custom_predicates=(project_id_predicator,)
+    )
+
+    config.add_route(
+        'reflector',
+        '/projects/{project_id}/reflector.js',
+        custom_predicates=(project_id_predicator,)
+    )
+
+    config.add_route(
+        'reflector_canvas',
+        '/projects/{project_id}/reflector-canvas.{ext}',
         custom_predicates=(project_id_predicator,)
     )
 

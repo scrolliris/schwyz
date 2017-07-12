@@ -11,19 +11,18 @@ var gulp = require('gulp')
   , run = require('run-sequence')
   ;
 
-var appName = 'puteoli';
-var moduleDir = path.resolve(__dirname, 'node_modules/@lupine-software');
+var moduleDir = path.resolve(__dirname, 'node_modules/@lupine-software')
+  , prefix = 'scrolliris-readability-'
+  ;
 
 // -- [shared tasks]
 
-gulp.task('env', function(done) {
+gulp.task('env', function() {
   // loads environment vars from .env
   var dotenv_file = '.env';
   if (fs.existsSync(dotenv_file)) {
     return gulp.src(dotenv_file)
     .pipe(env({file: dotenv_file, type: '.ini'}));
-  } else {
-    return done();
   };
 })
 
@@ -31,29 +30,42 @@ gulp.task('env', function(done) {
 
 gulp.task('distribute:script', ['env'], function() {
   // copy tracker-browser.min.js.mako into static/dist
-  var prefix = 'scrolliris-readability-';
-  return gulp.src(
-    moduleDir + '/' + prefix + 'tracker/dist/*-browser.min.js', {base: './'}
-  )
+  var pkgName = prefix + 'tracker';
+  return gulp.src([
+    moduleDir + '/' + pkgName + '/dist/*-browser.min.js'
+  ], {base: './'})
   .pipe(rename(function(file) {
     file.dirname = 'dist';
     file.basename = file.basename.replace(new RegExp('^' + prefix), '');
-    file.extname = '.js.mako';
+    file.extname += '.mako';
   }))
   .pipe(gulp.dest('static'));
 })
 
 gulp.task('distribute:widget', ['env'], function() {
-  // TODO
+  // copy reflector-browser{-canvas|}.min.{css|js}.mako into static/dist
+  var pkgName = prefix + 'reflector';
+  return gulp.src([
+    moduleDir + '/' + pkgName + '/dist/*-browser.min.js'
+  , moduleDir + '/' + pkgName + '/dist/*-browser-canvas.min.js'
+  , moduleDir + '/' + pkgName + '/dist/*-browser-canvas.min.css'
+  ], {base: './'})
+  .pipe(rename(function(file) {
+    file.dirname = 'dist';
+    file.basename = file.basename.replace(new RegExp('^' + prefix), '');
+    file.extname += '.mako';
+  }))
+  .pipe(gulp.dest('static'));
 })
 
 gulp.task('distribute:all', ['env'], function() {
-  return gulp.start('distribute:script');
+  return run('distribute:script', 'distribute:widget');
 });
 
 gulp.task('clean', function() {
   return gulp.src([
     'static/**/*.js.mako'
+  , 'static/**/*.css.mako'
   ], {
     read: false
   })

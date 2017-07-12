@@ -12,7 +12,8 @@
     "postinstall": "gulp"
   },
   "dependencies": {
-    "@lupine-software/scrolliris-readability-tracker": "0.0.3"
+    "@lupine-software/scrolliris-readability-reflector": "0.0.1"
+  , "@lupine-software/scrolliris-readability-tracker": "0.0.3"
   },
   "devDependencies": {
     "gulp": "3.9.1",
