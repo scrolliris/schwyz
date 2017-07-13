@@ -8,7 +8,6 @@ pyramid-mako==1.0.2
 
 # production
 CherryPy==10.2.2
-raven==6.1.0
 
 # development
 flake8==3.3.0
