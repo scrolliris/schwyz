@@ -8,7 +8,7 @@ __pycache__/
 .env*
 !.env*.sample
 .coverage
-*.yaml
+*.yaml*
 
 /bin/gitlab-ci-multi-runner
 
