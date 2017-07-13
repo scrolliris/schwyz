@@ -7,11 +7,7 @@ from wsgiref.handlers import BaseHandler
 
 from paste.translogger import TransLogger
 from pyramid.config import Configurator
-from pyramid.renderers import render
-from pyramid.response import Response
-from pyramid.view import view_config
 from pyramid.threadlocal import get_current_registry
-from pyramid.view import forbidden_view_config, notfound_view_config
 import pyramid.httpexceptions as exc
 
 from .env import Env
@@ -21,6 +17,7 @@ from .env import Env
 STATIC_DIR = path.join(path.dirname(path.abspath(__file__)), '../static')
 
 
+# pylint: disable=protected-access
 def ignore_broken_pipes(self):
     """Ignores unused error message about broken pipe.
     """
@@ -30,14 +27,17 @@ def ignore_broken_pipes(self):
 
 BaseHandler.__handle_error_original_ = BaseHandler.handle_error
 BaseHandler.handle_error = ignore_broken_pipes
+# pylint: enable=protected-access
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+# pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-sh = logging.StreamHandler()  # pylint: disable=invalid-name
+sh = logging.StreamHandler()
 sh.setLevel(logging.INFO)
 sh.setFormatter(logging.Formatter('%(message)s'))
 logger.addHandler(sh)
+# pylint: enable=invalid-name
 
 
 def get_settings():
@@ -66,127 +66,6 @@ def resolve_env_vars(settings):
     return s
 
 
-def tpl(filename):
-    """HTML Template Utility.
-    """
-    return './templates/{0:s}.mako'.format(filename)
-
-
-def tpl_dst(filename, extname='js'):
-    """{JS|CSS} Template Utility.
-    """
-    return STATIC_DIR + '/dist/{0:s}.min.{1:s}.mako'.format(filename, extname)
-
-
-# -- views
-
-
-@notfound_view_config(renderer=tpl('404'),
-                      append_slash=exc.HTTPMovedPermanently)
-def notfound(req):
-    """404 Not Found Error.
-    """
-    req.response.status = 404
-    return dict()
-
-
-@forbidden_view_config(renderer=tpl('403'))
-def forbidden(req):
-    """403 Forbidden Error.
-    """
-    req.response.status = 403
-    return dict()
-
-
-@view_config(context=exc.HTTPInternalServerError, renderer='string')
-def internal_server_error(req):
-    """Internal Server Error.
-    """
-    body = 'Cannot {} {}'.format(req.method, req.path)
-    return Response(body, status='500 Internal Server Error')
-
-
-@view_config(route_name='tracker',
-             renderer=tpl_dst('tracker-browser', 'js'),
-             request_method='GET')
-def tracker(req):
-    """Returns a tracker script for valid request.
-    """
-    if 'api_key' not in req.params:
-        raise exc.HTTPForbidden()
-
-    project_id = req.matchdict['project_id']
-    scroll_key = req.params['api_key']
-
-    # FIXME
-    logger.info('project_id -> %s', project_id)
-    logger.info('scroll_key -> %s', scroll_key)
-
-    res = req.response
-    res.content_type = 'text/javascript'
-    res.headers['Cache-Control'] = 'no-cache,no-store,must-revalidate'
-    res.headers['Pragma'] = 'no-cache'
-    res.headers['Expires'] = '0'
-    return dict()
-
-
-@view_config(route_name='reflector',
-             renderer=tpl_dst('reflector-browser', 'js'),
-             request_method='GET')
-def reflector(req):
-    """Returns a reflector script for valid request.
-    """
-    if 'api_key' not in req.params:
-        raise exc.HTTPForbidden()
-
-    project_id = req.matchdict['project_id']
-    scroll_key = req.params['api_key']
-
-    # FIXME
-    logger.info('project_id -> %s', project_id)
-    logger.info('scroll_key -> %s', scroll_key)
-
-    res = req.response
-    res.content_type = 'text/javascript'
-    res.headers['Cache-Control'] = 'no-cache,no-store,must-revalidate'
-    res.headers['Pragma'] = 'no-cache'
-    res.headers['Expires'] = '0'
-    return dict()
-
-
-@view_config(route_name='reflector_canvas',
-             request_method='GET')
-def reflector_canvas(req):
-    """Returns a reflector canvas for valid request.
-    """
-    if 'api_key' not in req.params:
-        raise exc.HTTPForbidden()
-
-    if req.matchdict['ext'] not in ('js', 'css'):
-        raise exc.HTTPForbidden()
-
-    ext = req.matchdict['ext']
-    project_id = req.matchdict['project_id']
-    scroll_key = req.params['api_key']
-
-    # FIXME
-    logger.info('ext -> %s', ext)
-    logger.info('project_id -> %s', project_id)
-    logger.info('scroll_key -> %s', scroll_key)
-
-    result = render(tpl_dst('reflector-browser-canvas', ext), {}, req)
-    res = Response(result)
-    res.content_type = 'text/{0:s}'.format(
-        'javascript' if ext == 'js' else 'css')
-    res.headers['Cache-Control'] = 'no-cache,no-store,must-revalidate'
-    res.headers['Pragma'] = 'no-cache'
-    res.headers['Expires'] = '0'
-    return res
-
-
-# -- main
-
-
 def main(_, **settings):
     """The main function.
     """
@@ -207,29 +86,37 @@ def main(_, **settings):
             STATIC_DIR, filenames=filenames, http_cache=cache_max_age)
 
     def project_id_predicator(info, request):
+        """Validates `project_id` parameter.
+        """
         if info['route'].name in ('tracker', 'reflector', 'reflector_canvas'):
             # FIXME:
             return info['match']['project_id'] == 'development'
 
-    config.add_route(
-        'tracker',
-        '/projects/{project_id}/tracker.js',
-        custom_predicates=(project_id_predicator,)
-    )
+    config.scan('.request')
 
-    config.add_route(
-        'reflector',
-        '/projects/{project_id}/reflector.js',
-        custom_predicates=(project_id_predicator,)
-    )
+    if env.get('VIEW_TYPE') == 'tracker':
+        config.add_route(
+            'tracker',
+            '/projects/{project_id}/tracker.js',
+            custom_predicates=(project_id_predicator,)
+        )
+        config.include('.views.tracker')
+        config.scan('.views.tracker')
 
-    config.add_route(
-        'reflector_canvas',
-        '/projects/{project_id}/reflector-canvas.{ext}',
-        custom_predicates=(project_id_predicator,)
-    )
+    if env.get('VIEW_TYPE') == 'reflector':
+        config.add_route(
+            'reflector',
+            '/projects/{project_id}/reflector.js',
+            custom_predicates=(project_id_predicator,)
+        )
+        config.add_route(
+            'reflector_canvas',
+            '/projects/{project_id}/reflector-canvas.{ext}',
+            custom_predicates=(project_id_predicator,)
+        )
+        config.include('.views.reflector')
+        config.scan('.views.reflector')
 
-    config.scan()
     app = config.make_wsgi_app()
     app = TransLogger(app, setup_console_handler=False)
     return app
