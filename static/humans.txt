@@ -1,0 +1,14 @@
+/* TEAM */
+Name: Yasuhiro Asaka
+Role: Programmer
+Mail: yasuhiro.asaka@lupine-software.com
+From: Yokohama, Japan
+
+Name: Misaki Asaka
+Role: Designer
+Mail: misaki.asaka@lupine-software.com
+From: Kazo, Japan
+
+/* API */
+Last update: 2017/07/14
+MIME type: application/json

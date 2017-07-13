@@ -16,6 +16,7 @@ app.yaml
 
 /static/*
 !/static/.gitignore
+!/static/*.txt
 
 /google-*
 /bin/publi.sh
