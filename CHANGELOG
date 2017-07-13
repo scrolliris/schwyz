@@ -1,3 +1,7 @@
+14 Jul 2017; Yasuhiro Asaka <yasuhiro.asaka@grauwoelfchen.net>:
+	* Add reflector support
+	* Enter VIEW_TYPE environment variable
+
 13 Jul 2017; Yasuhiro Asaka <yasuhiro.asaka@grauwoelfchen.net>:
 	* Add robots.txt and humans.txt
 

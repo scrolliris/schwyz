@@ -27,11 +27,6 @@ https://gitlab.com/lupine-software/puteoli)
 * Node.js `7.8.0` (build)
 
 
-## Integrations
-
-* Sentry
-
-
 ## Setup
 
 ```zsh
@@ -73,6 +68,11 @@ Check `Makefile`.
 : run server
 (venv) % make serve
 ```
+
+
+## Configuration
+
+Set `VIEW_TYPE={tracker|reflector}` as environment variable.
 
 
 ## Deployment
