@@ -7,7 +7,7 @@ __pycache__/
 
 .env
 .coverage
-app.yaml
+*.yaml
 
 /bin/gitlab-ci-multi-runner
 
@@ -18,8 +18,8 @@ app.yaml
 !/static/.gitignore
 !/static/*.txt
 
-/google-*
-/bin/publi.sh
+/*-sdk*
+/bin/*.sh
 
 /tmp/logs/*.log
 !/tmp/logs/.gitignore
