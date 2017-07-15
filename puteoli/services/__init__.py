@@ -127,7 +127,7 @@ class SessionInitiator(BaseServiceObject):
         try:
             self.table.put_item(Item={
                 'token': token,
-                'created_at': self.__class__.generate_timestamp(),
+                'initiated_at': self.__class__.generate_timestamp(),
                 'project_id': project_id,
                 'context': context,
                 'api_key': api_key,
