@@ -1,3 +1,7 @@
+16 Jul 2017; Yasuhiro Asaka <yasuhiro.asaka@grauwoelfchen.net>:
+	* Add session provisioning and domain checking
+	* Make tracker.js to embed csrfToken
+
 15 Jul 2017; Yasuhiro Asaka <yasuhiro.asaka@grauwoelfchen.net>:
 	* Update tracker version 0.0.4
 
