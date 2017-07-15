@@ -5,6 +5,7 @@ import pyramid.httpexceptions as exc
 
 from puteoli import logger
 from puteoli.views import no_cache, tpl_dst
+from puteoli.services import IInitiator
 
 
 @view_config(route_name='tracker',
@@ -13,17 +14,17 @@ from puteoli.views import no_cache, tpl_dst
 def tracker(req):
     """Returns a tracker script for valid request.
     """
-    if 'api_key' not in req.params:
-        raise exc.HTTPForbidden()
-
     project_id = req.matchdict['project_id']
-    scroll_key = req.params['api_key']
+    api_key = req.params['api_key']
 
-    # FIXME
-    logger.info('project_id -> %s', project_id)
-    logger.info('scroll_key -> %s', scroll_key)
+    initiator = req.find_service(iface=IInitiator, name='session')
+    token = initiator.provision(project_id=project_id, api_key=api_key,
+                                context='write')
+    if not token:
+        logger.error('no token')
+        raise exc.HTTPInternalServerError()
 
     res = req.response
     res.content_type = 'text/javascript'
     req.add_response_callback(no_cache)
-    return dict()
+    return dict(token=token)

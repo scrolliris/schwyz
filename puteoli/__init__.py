@@ -51,7 +51,7 @@ def resolve_env_vars(settings):
     """
     env = Env()
     s = settings.copy()
-    for k, v in env.settings_mappings.items():
+    for k, v in env.mappings.items():
         # ignores missing key or it has a already value in config
         if k not in s or s[k]:
             continue
@@ -85,37 +85,10 @@ def main(_, **settings):
         config.add_asset_views(
             STATIC_DIR, filenames=filenames, http_cache=cache_max_age)
 
-    def project_id_predicator(info, request):
-        """Validates `project_id` parameter.
-        """
-        if info['route'].name in ('tracker', 'reflector', 'reflector_canvas'):
-            # FIXME:
-            return info['match']['project_id'] == 'development'
-
     config.scan('.request')
+    config.include('.services')
 
-    if env.get('VIEW_TYPE') == 'tracker':
-        config.add_route(
-            'tracker',
-            '/projects/{project_id}/tracker.js',
-            custom_predicates=(project_id_predicator,)
-        )
-        config.include('.views.tracker')
-        config.scan('.views.tracker')
-
-    if env.get('VIEW_TYPE') == 'reflector':
-        config.add_route(
-            'reflector',
-            '/projects/{project_id}/reflector.js',
-            custom_predicates=(project_id_predicator,)
-        )
-        config.add_route(
-            'reflector_canvas',
-            '/projects/{project_id}/reflector-canvas.{ext}',
-            custom_predicates=(project_id_predicator,)
-        )
-        config.include('.views.reflector')
-        config.scan('.views.reflector')
+    config.include('.route')
 
     app = config.make_wsgi_app()
     app = TransLogger(app, setup_console_handler=False)

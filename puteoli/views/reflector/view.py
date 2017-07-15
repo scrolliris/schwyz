@@ -7,24 +7,15 @@ import pyramid.httpexceptions as exc
 
 from puteoli import logger
 from puteoli.views import no_cache, tpl_dst
+from puteoli.services import IInitiator
 
 
 @view_config(route_name='reflector',
              renderer=tpl_dst('reflector-browser', 'js'),
              request_method='GET')
 def reflector(req):
-    """Returns a reflector script for valid request.
+    """Returns just a reflector script for valid request.
     """
-    if 'api_key' not in req.params:
-        raise exc.HTTPForbidden()
-
-    project_id = req.matchdict['project_id']
-    scroll_key = req.params['api_key']
-
-    # FIXME
-    logger.info('project_id -> %s', project_id)
-    logger.info('scroll_key -> %s', scroll_key)
-
     res = req.response
     res.content_type = 'text/javascript'
     req.add_response_callback(no_cache)
@@ -36,20 +27,19 @@ def reflector(req):
 def reflector_canvas(req):
     """Returns a reflector canvas for valid request.
     """
-    if 'api_key' not in req.params:
-        raise exc.HTTPForbidden()
-
     if req.matchdict['ext'] not in ('js', 'css'):
         raise exc.HTTPForbidden()
 
-    ext = req.matchdict['ext']
     project_id = req.matchdict['project_id']
-    scroll_key = req.params['api_key']
+    api_key = req.params['api_key']
+    ext = req.matchdict['ext']
 
-    # FIXME
-    logger.info('ext -> %s', ext)
-    logger.info('project_id -> %s', project_id)
-    logger.info('scroll_key -> %s', scroll_key)
+    initiator = req.find_service(iface=IInitiator, name='session')
+    token = initiator.provision(project_id=project_id, api_key=api_key,
+                                context='read')
+    if not token:
+        logger.error('no token')
+        raise exc.HTTPInternalServerError()
 
     result = render(tpl_dst('reflector-browser-canvas', ext), {}, req)
     res = Response(result)

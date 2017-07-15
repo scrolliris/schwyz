@@ -34,7 +34,7 @@ class Env():
         return os.environ.get(key, default)
 
     def set(self, key, value):
-        return os.environ.set(key, value)
+        os.environ[key] = value
 
     @reify
     def host(self):
@@ -59,8 +59,14 @@ class Env():
         return self._value == 'production'
 
     @reify
-    def settings_mappings(self):
+    def mappings(self):
         return {
             # Note: these values are updated if exist but not empty
             'wsgi.url_scheme': 'WSGI_URL_SCHEME',
+            'aws.access_key_id': 'AWS_ACCESS_KEY_ID',
+            'aws.secret_access_key': 'AWS_SECRET_ACCESS_KEY',
+            'aws.endpoint_url': 'AWS_ENDPOINT_URL',
+            'aws.region_name': 'AWS_REGION_NAME',
+            'aws.domain_table_name':  'AWS_DOMAIN_TABLE_NAME',
+            'aws.session_table_name': 'AWS_SESSION_TABLE_NAME',
         }

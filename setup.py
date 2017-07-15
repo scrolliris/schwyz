@@ -9,9 +9,10 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, *('doc', 'README.rst'))) as f:
     README = f.read()
 with open(os.path.join(here, 'CHANGELOG')) as f:
-    CHANGES = f.read()
+    CHANGELOG = f.read()
 
 requires = [
+    'boto3',
     'colorlog',
     'Paste',
     'PasteScript',
@@ -19,6 +20,7 @@ requires = [
     'pyramid',
     'pyramid_assetviews',
     'pyramid_mako',
+    'pyramid_services',
 ]
 
 development_requires = [
@@ -41,8 +43,8 @@ production_requires = [
 setup(
     name='puteoli',
     version='0.1',
-    description='uPstrem UTility & widgEt hOsting appLIcation',
-    long_description=README + '\n\n' + CHANGES,
+    description='Puteoli; uPstrem UTility & widgEt hOsting appLIcation',
+    long_description=README + '\n\n' + CHANGELOG,
     classifiers=[
         "Programming Language :: Python",
         "Framework :: Pyramid",

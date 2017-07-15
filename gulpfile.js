@@ -8,6 +8,7 @@ var gulp = require('gulp')
   , env = require('gulp-env')
   , clean = require('gulp-clean')
   , rename = require('gulp-rename')
+  , replace = require('gulp-replace')
   , run = require('run-sequence')
   ;
 
@@ -39,6 +40,7 @@ gulp.task('distribute:script', ['env'], function() {
     file.basename = file.basename.replace(new RegExp('^' + prefix), '');
     file.extname += '.mako';
   }))
+  .pipe(replace(/\|\|(\{csrfToken\:)(null),/, '\|\|$1"${token}",'))
   .pipe(gulp.dest('static'));
 })
 
