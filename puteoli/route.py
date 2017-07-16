@@ -26,15 +26,17 @@ def ext_predicator_factory(ext):
 def credential_predicator(inf, req):
     """Validates `project_id` and `api_key` using CredentialValidator.
     """
-    if inf['route'].name in ('tracker', 'reflector', 'reflector_canvas'):
+    route_name = inf['route'].name
+    if route_name in ('tracker', 'reflector', 'reflector_canvas'):
         if 'api_key' not in req.params:
             raise exc.HTTPForbidden()
 
         project_id = inf['match']['project_id']
         api_key = req.params['api_key']
-        context = 'write' if inf['route'] == 'tracker' else 'read'
+        context = 'write' if route_name == 'tracker' else 'read'
 
-        logger.info('project_id -> %s, api_key -> %s, context -> %s',
+        logger.info('credential predicator: ' \
+                    'project_id -> %s, api_key -> %s, context -> %s',
                     project_id, api_key, context)
 
         validator = req.find_service(iface=IValidator, name='credential')
