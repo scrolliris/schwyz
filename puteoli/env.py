@@ -65,8 +65,8 @@ class Env():
             'wsgi.url_scheme': 'WSGI_URL_SCHEME',
             'aws.access_key_id': 'AWS_ACCESS_KEY_ID',
             'aws.secret_access_key': 'AWS_SECRET_ACCESS_KEY',
-            'aws.endpoint_url': 'AWS_ENDPOINT_URL',
-            'aws.region_name': 'AWS_REGION_NAME',
-            'aws.domain_table_name':  'AWS_DOMAIN_TABLE_NAME',
-            'aws.session_table_name': 'AWS_SESSION_TABLE_NAME',
+            'db.endpoint_url': 'DB_ENDPOINT_URL',
+            'db.region_name': 'DB_REGION_NAME',
+            'db.credential_table_name':  'DB_CREDENTIAL_TABLE_NAME',
+            'db.session_table_name': 'DB_SESSION_TABLE_NAME',
         }

@@ -23,8 +23,8 @@ def ext_predicator_factory(ext):
     return _ext_predicator
 
 
-def domain_predicator(inf, req):
-    """Validates `project_id` and `api_key` using DomainValidator.
+def credential_predicator(inf, req):
+    """Validates `project_id` and `api_key` using CredentialValidator.
     """
     if inf['route'].name in ('tracker', 'reflector', 'reflector_canvas'):
         if 'api_key' not in req.params:
@@ -32,12 +32,15 @@ def domain_predicator(inf, req):
 
         project_id = inf['match']['project_id']
         api_key = req.params['api_key']
+        context = 'write' if inf['route'] == 'tracker' else 'read'
 
-        logger.info('project_id -> %s, api_key -> %s', project_id, api_key)
+        logger.info('project_id -> %s, api_key -> %s, context -> %s',
+                    project_id, api_key, context)
 
-        validator = req.find_service(iface=IValidator, name='domain')
-        if not validator.validate(project_id=project_id, api_key=api_key):
-            logger.error('invalid project_id or api_key')
+        validator = req.find_service(iface=IValidator, name='credential')
+        if not validator.validate(project_id=project_id, api_key=api_key,
+                                  context=context):
+            logger.error('invalid credentials')
             raise exc.HTTPNotAcceptable()
 
         return True
@@ -55,7 +58,7 @@ def includeme(config):
         config.add_route(
             'tracker',
             '/projects/{project_id}/tracker.{ext}',
-            custom_predicates=(js_predicator, domain_predicator,)
+            custom_predicates=(js_predicator, credential_predicator,)
         )
         config.scan('.views.tracker')
         config.include('.views.tracker')
@@ -66,12 +69,12 @@ def includeme(config):
         config.add_route(
             'reflector',
             '/projects/{project_id}/reflector.{ext}',
-            custom_predicates=(js_predicator, domain_predicator,)
+            custom_predicates=(js_predicator, credential_predicator,)
         )
         config.add_route(
             'reflector_canvas',
             '/projects/{project_id}/reflector-canvas.{ext}',
-            custom_predicates=(asset_preficator, domain_predicator,)
+            custom_predicates=(asset_preficator, credential_predicator,)
         )
         config.scan('.views.reflector')
         config.include('.views.reflector')

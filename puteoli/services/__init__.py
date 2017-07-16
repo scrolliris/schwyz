@@ -58,8 +58,8 @@ class BaseServiceObject(object):  # pylint: disable=too-few-public-methods
         self.table = self.db.Table(kwargs['table_name'])
 
 
-class DomainValidator(BaseServiceObject):
-    """DomainValidator Service.
+class CredentialValidator(BaseServiceObject):
+    """CredentialValidator Service.
     """
     @classmethod
     def options(cls, settings):
@@ -68,20 +68,24 @@ class DomainValidator(BaseServiceObject):
         return {
             'aws_access_key_id': settings['aws.access_key_id'],
             'aws_secret_access_key': settings['aws.secret_access_key'],
-            'region_name': settings['aws.region_name'],
-            'endpoint_url': settings['aws.endpoint_url'],
-            'table_name': settings['aws.domain_table_name'],
+            'region_name': settings['db.region_name'],
+            'endpoint_url': settings['db.endpoint_url'],
+            'table_name': settings['db.credential_table_name'],
         }
 
-    def validate(self, project_id, api_key):
+    def validate(self, project_id, api_key, context='read'):
         """Validates project_id and api_key.
         """
-        res = self.table.get_item(Key={
+        if context not in ('read', 'write'):
+            raise ContextError('invalid context {0:s}'.format(context))
+
+        res = self.table.get_item(Credential={
             'project_id': project_id,
         })
         item = res['Item'] if 'Item' in res else None
-        if item and 'api_key' in item:
-            return api_key == item['api_key']
+        key = '{0:s}_key'.format(context)  # {read|write}_key
+        if item and key in item:
+            return api_key == item[key]
         return False
 
 
@@ -96,9 +100,9 @@ class SessionInitiator(BaseServiceObject):
         return {
             'aws_access_key_id': settings['aws.access_key_id'],
             'aws_secret_access_key': settings['aws.secret_access_key'],
-            'region_name': settings['aws.region_name'],
-            'endpoint_url': settings['aws.endpoint_url'],
-            'table_name': settings['aws.session_table_name'],
+            'region_name': settings['db.region_name'],
+            'endpoint_url': settings['db.endpoint_url'],
+            'table_name': settings['db.session_table_name'],
         }
 
     @classmethod
@@ -138,17 +142,17 @@ class SessionInitiator(BaseServiceObject):
         return token
 
 
-def domain_validator_factory():
-    """The domain validator service factory.
+def credential_validator_factory():
+    """The credential validator service factory.
     """
 
-    def _domain_validator(_, req):
+    def _credential_validator(_, req):
         """Actual validator factory method.
         """
-        options = DomainValidator.options(req.settings)
-        return DomainValidator(req, **options)
+        options = CredentialValidator.options(req.settings)
+        return CredentialValidator(req, **options)
 
-    return _domain_validator
+    return _credential_validator
 
 
 def session_initiator_factory():
@@ -168,9 +172,9 @@ def includeme(config):
     """Initializes service objects.
     """
     config.register_service_factory(
-        domain_validator_factory(),
+        credential_validator_factory(),
         iface=IValidator,
-        name='domain')
+        name='credential')
     config.register_service_factory(
         session_initiator_factory(),
         iface=IInitiator,
