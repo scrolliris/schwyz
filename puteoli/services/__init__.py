@@ -73,7 +73,7 @@ class CredentialValidator(BaseServiceObject):
             'table_name': settings['db.credential_table_name'],
         }
 
-    def validate(self, project_id, api_key, context='read'):
+    def validate(self, project_id='', api_key='', context='read'):
         """Validates project_id and api_key.
         """
         if context not in ('read', 'write'):
@@ -82,7 +82,7 @@ class CredentialValidator(BaseServiceObject):
         res = self.table.get_item(Key={
             'project_id': project_id,
         })
-        item = res['Item'] if 'Item' in res else None
+        item = res['Item'] if 'Item' in res else False
         key = '{0:s}_key'.format(context)  # {read|write}_key
         if item and key in item:
             return api_key == item[key]
@@ -139,6 +139,7 @@ class SessionInitiator(BaseServiceObject):
         except Exception as e:  # pylint: disable=broad-except
             logger = logging.getLogger(__name__)
             logger.error('session provisioning error -> %s', e)
+            return None
         return token
 
 
