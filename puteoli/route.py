@@ -35,8 +35,7 @@ def credential_predicator(inf, req):
         api_key = req.params['api_key']
         context = 'write' if route_name == 'tracker' else 'read'
 
-        logger.info('credential predicator: ' \
-                    'project_id -> %s, api_key -> %s, context -> %s',
+        logger.info('project_id -> %s, api_key -> %s, context -> %s',
                     project_id, api_key, context)
 
         validator = req.find_service(iface=IValidator, name='credential')

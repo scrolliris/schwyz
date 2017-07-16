@@ -79,7 +79,7 @@ class CredentialValidator(BaseServiceObject):
         if context not in ('read', 'write'):
             raise ContextError('invalid context {0:s}'.format(context))
 
-        res = self.table.get_item(Credential={
+        res = self.table.get_item(Key={
             'project_id': project_id,
         })
         item = res['Item'] if 'Item' in res else None
