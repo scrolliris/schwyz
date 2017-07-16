@@ -45,12 +45,12 @@ gulp.task('distribute:script', ['env'], function() {
 })
 
 gulp.task('distribute:widget', ['env'], function() {
-  // copy reflector-browser{-canvas|}.min.{css|js}.mako into static/dist
+  // copy reflector-{browser|canvas}.min.{css|js}.mako into static/dist
   var pkgName = prefix + 'reflector';
   return gulp.src([
     moduleDir + '/' + pkgName + '/dist/*-browser.min.js'
-  , moduleDir + '/' + pkgName + '/dist/*-browser-canvas.min.js'
-  , moduleDir + '/' + pkgName + '/dist/*-browser-canvas.min.css'
+  , moduleDir + '/' + pkgName + '/dist/*-canvas.min.js'
+  , moduleDir + '/' + pkgName + '/dist/*-canvas.min.css'
   ], {base: './'})
   .pipe(rename(function(file) {
     file.dirname = 'dist';
