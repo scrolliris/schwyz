@@ -7,6 +7,8 @@ __pycache__/
 
 .env*
 !.env*.sample
+package*.json
+
 .coverage
 *.yaml*
 
