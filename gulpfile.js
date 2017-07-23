@@ -40,7 +40,7 @@ gulp.task('distribute:script', ['env'], function() {
     file.basename = file.basename.replace(new RegExp('^' + prefix), '');
     file.extname += '.mako';
   }))
-  .pipe(replace(/\|\|(\{csrfToken\:)(null),/, '\|\|$1"${token}",'))
+  .pipe(replace(/\.(csrfToken\|\|)null,/, '\.$1"${token}",'))
   .pipe(gulp.dest('static'));
 })
 

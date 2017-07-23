@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@lupine-software/scrolliris-readability-reflector": "0.0.7"
-  , "@lupine-software/scrolliris-readability-tracker": "0.0.5"
+  , "@lupine-software/scrolliris-readability-tracker": "0.0.6"
   },
   "devDependencies": {
     "gulp": "3.9.1",
