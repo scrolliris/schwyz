@@ -148,7 +148,7 @@ It requires `docker`.
 
 ## License
 
-Puteoli; Copyright (c) 2017 Lupine Software, LLC.
+Puteoli; Copyright (c) 2017 Lupine Software LLC
 
 
 This is free software;  

@@ -13,7 +13,7 @@ text_banner="\
 /|/  \                   | | o
  |___/      _|_  _   __  | |
  |    |   |  |  |/  /  \_|/  |
- |     \_/|_/|_/|__/\__/ |__/|_/  by Lupine Software, LLC.
+ |     \_/|_/|_/|__/\__/ |__/|_/ by Lupine Software LLC
 "
 
 print_context() {
