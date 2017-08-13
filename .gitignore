@@ -21,7 +21,9 @@ package*.json
 !/static/.gitignore
 !/static/*.txt
 
-/*-sdk*
+/lib*
+!/lib/.gitignore
+
 /bin/*.sh
 
 /tmp/logs/*.log
