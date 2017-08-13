@@ -88,12 +88,18 @@ class CredentialValidator(BaseDatastoreServiceObject):
         if context not in ('read', 'write'):
             raise ContextError('invalid context {0:s}'.format(context))
 
-        query = self.client.query(kind=self.kind)
-        query.add_filter('project_access_key_id', '=', project_id)
-        query.add_filter('{0:s}_key'.format(context), '=', api_key)
-        query.keys_only()
+        sites = []
+        try:
+            query = self.client.query(kind=self.kind)
+            query.add_filter('project_access_key_id', '=', project_id)
+            query.add_filter('{0:s}_key'.format(context), '=', api_key)
+            query.keys_only()
+            sites = list(query.fetch() or ())
+        except Exception as e:  # pylint: disable=broad-except
+            logger = logging.getLogger(__name__)
+            logger.error('session provisioning error -> %s', e)
+            return None
 
-        sites = list(query.fetch() or ())
         if len(sites) != 1:
             return False
         return True
