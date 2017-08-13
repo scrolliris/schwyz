@@ -8,6 +8,7 @@ import uuid
 
 import boto3
 from boto3.dynamodb.conditions import Attr
+from google.cloud import datastore
 from zope.interface import Attribute, Interface
 
 
@@ -40,8 +41,9 @@ class ContextError(Exception):
         return repr(self.value)
 
 
-class BaseServiceObject(object):  # pylint: disable=too-few-public-methods
-    """Service for session provision.
+class BaseDynamoDBServiceObject(object):
+    # pylint: disable=too-few-public-methods
+    """Service using AWS DynamoDB.
     """
     def __init__(self, *_, **kwargs):
         session = boto3.session.Session(
@@ -58,7 +60,17 @@ class BaseServiceObject(object):  # pylint: disable=too-few-public-methods
         self.table = self.db.Table(kwargs['table_name'])
 
 
-class CredentialValidator(BaseServiceObject):
+class BaseDatastoreServiceObject(object):
+    # pylint: disable=too-few-public-methods
+    """Service using GCP Datastore.
+    """
+    def __init__(self, *_, **kwargs):
+        # project_id for datastore
+        self.client = datastore.Client(kwargs['project_id'])
+        self.kind = kwargs['kind']
+
+
+class CredentialValidator(BaseDatastoreServiceObject):
     """CredentialValidator Service.
     """
     @classmethod
@@ -66,31 +78,28 @@ class CredentialValidator(BaseServiceObject):
         """Returns options for this initiator.
         """
         return {
-            'aws_access_key_id': settings['aws.access_key_id'],
-            'aws_secret_access_key': settings['aws.secret_access_key'],
-            'region_name': settings['db.region_name'],
-            'endpoint_url': settings['db.endpoint_url'],
-            'table_name': settings['db.credential_table_name'],
+            'project_id': settings['datastore.project_id'],
+            'kind': settings['datastore.kind'],
         }
 
     def validate(self, project_id='', api_key='', context='read'):
-        """Validates project_id and api_key.
+        """Validates project_id (project_access_key_id) and api_key.
         """
         if context not in ('read', 'write'):
             raise ContextError('invalid context {0:s}'.format(context))
 
-        res = self.table.get_item(Key={
-            'project_id': project_id,
-        })
-        item = res['Item'] if 'Item' in res else False
-        key = '{0:s}_key'.format(context)  # {read|write}_key
-        if item and key in item:
-            return api_key == item[key]
-        return False
+        query = self.client.query(kind=self.kind)
+        query.add_filter('project_access_key_id', '=', project_id)
+        query.add_filter('{0:s}_key'.format(context), '=', api_key)
+        query.keys_only()
+
+        sites = list(query.fetch() or ())
+        if len(sites) != 1:
+            return False
+        return True
 
 
-
-class SessionInitiator(BaseServiceObject):
+class SessionInitiator(BaseDynamoDBServiceObject):
     """SessionInitiator Service.
     """
     @classmethod

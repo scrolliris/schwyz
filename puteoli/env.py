@@ -69,4 +69,6 @@ class Env():
             'db.region_name': 'DB_REGION_NAME',
             'db.credential_table_name':  'DB_CREDENTIAL_TABLE_NAME',
             'db.session_table_name': 'DB_SESSION_TABLE_NAME',
+            'datastore.project_id': 'DATASTORE_PROJECT_ID',
+            'datastore.kind': 'DATASTORE_KIND',
         }
