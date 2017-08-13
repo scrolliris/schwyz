@@ -25,4 +25,5 @@ package*.json
 /bin/*.sh
 
 /tmp/logs/*.log
+/tmp/_data
 !/tmp/logs/.gitignore

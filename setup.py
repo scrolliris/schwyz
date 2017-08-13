@@ -14,6 +14,7 @@ with open(os.path.join(here, 'CHANGELOG')) as f:
 requires = [
     'boto3',
     'colorlog',
+    'google-cloud-datastore',
     'Paste',
     'PasteScript',
     'python-dotenv',

@@ -1,0 +1,98 @@
+#!/usr/bin/env sh
+set -u
+
+root_dir=$(dirname $(dirname $(readlink -f $0)))
+
+project=
+env_name=
+clean_data_dir=false
+
+
+print_usage() {
+  cat <<USG
+
+Usage:
+  [ENV=] ${1} [options]
+
+Run datastore emulator.
+
+Options:
+ -p, --project   specify project_id
+ -h, --help      display this help and exit
+ -c, --clean     clean data directory
+
+Positional arguments:
+  None
+
+Examples:
+  % ./bin/datastore_local --project foo
+  % ./bin/datastore_local --project foo --clean
+USG
+}
+
+
+getopt --test > /dev/null
+if [ $? -ne 4 ]; then
+  echo "\`getout --test\` failed"
+fi
+
+options=cehp
+longoptions=clean,env,help,project
+
+_=`getopt --name "${0}" \
+--options "${options}" --longoptions "${longoptions}" --unquoted -- "${@}"`
+
+if [ $? -ne 0 ]; then
+  exit 2
+fi
+
+while [ $# -gt 0 ]; do
+  case "${1}" in
+    -c|--clean)
+      clean_data_dir=true
+      shift
+      ;;
+    -e|--env)
+      env_name="${2}"
+      shift
+      ;;
+    -p|--project)
+      project="${2}"
+      shift
+      ;;
+    -h|--help)
+      print_usage `basename $0`
+      exit 0
+      ;;
+    *)
+      echo "Unknown option :'("
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+_env=$(printenv ENV)
+if [ "${_env}" = "" ]; then
+  _env="development"
+fi
+
+if [ "${env_name}" = "" ]; then
+  env_name="${_env}"
+fi
+
+
+data_dir=tmp/_data/datastore/${env_name}
+host_port=localhost:8432
+
+if [ "${clean_data_dir}" = "true" ]; then
+  rm -fr $data_dir
+fi
+
+mkdir -p $data_dir
+
+gcloud beta emulators datastore start \
+  --host-port=$host_port \
+  --project=$project \
+  --data-dir=$data_dir \
+  --store-on-disk

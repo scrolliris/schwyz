@@ -1,5 +1,6 @@
 boto3==1.4.4
 colorlog==2.10.0
+google-cloud-datastore==1.2.0
 Paste==2.0.3
 PasteScript==2.0.2
 python-dotenv==0.6.4
