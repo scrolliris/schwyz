@@ -26,4 +26,5 @@ package*.json
 
 /tmp/logs/*.log
 /tmp/_data
+/tmp/_cache
 !/tmp/logs/.gitignore

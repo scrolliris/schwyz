@@ -17,4 +17,4 @@ done < "$ENV_FILE"
 # ci-runner test
 echo "$ENV_OPTS $1" | xargs ${DIR_NAME}/bin/gitlab-ci-multi-runner exec docker \
   --cache-dir /cache \
-  --docker-volumes ${DIR_NAME}/build-output:/cache
+  --docker-volumes ${DIR_NAME}/tmp/_cache:/cache

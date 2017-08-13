@@ -39,7 +39,6 @@ ignore=
 ignore-patterns=
   .*.egg-info,
   venv*,
-  build*,
   \.env*,
   \.coverage*,
   .*.yml,
