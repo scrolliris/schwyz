@@ -40,8 +40,8 @@ check:
 
 clean:
 	find . ! -readable -prune -o -print \
-		! -path "./.git/*" ! -path "./node_modules/*" ! -path "./venv*" \
-		! -path "./doc/*" ! -path "./tmp/_cache*" ! -path "./tmp/_data*" | \
+	       ! -path "./.git/*" ! -path "./node_modules/*" ! -path "./venv*" \
+	       ! -path "./doc/*" ! -path "./tmp/_cache*" ! -path "./tmp/_data*" | \
 	  grep -E "(__pycache__|\.egg-info|\.pyc|\.pyo)" | xargs rm -rf;
 ifneq (, $(shell which gulp 2>/dev/null))
 	gulp clean
