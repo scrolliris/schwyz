@@ -82,7 +82,7 @@ class CredentialValidator(BaseDatastoreServiceObject):
         # credentials file must be in lib
         credentials = '{}/{}'.format(
             os.path.dirname(__file__) + '/../../lib',
-            settings['datastore.credentials'])
+            os.path.basename(settings['datastore.credentials']))
         return {
             'credentials': credentials,
             'kind': settings['datastore.kind'],
