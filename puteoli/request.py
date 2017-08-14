@@ -29,9 +29,8 @@ class CustomRequest(Request):
 
         # self.environ is request env.
         # the `env` is os's environ handler (wrapper)
-
-        env = Env()
-        if env.is_production:
+        self.env = Env()
+        if self.env.is_production:
             env_dict = self._force_ssl(env_dict)
             env_dict = self._trim_port(env_dict)
 

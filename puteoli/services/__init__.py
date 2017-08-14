@@ -4,6 +4,7 @@
 import base64
 import datetime
 import logging
+import os
 import uuid
 
 import boto3
@@ -65,8 +66,9 @@ class BaseDatastoreServiceObject(object):
     """Service using GCP Datastore.
     """
     def __init__(self, *_, **kwargs):
-        # project_id for datastore
-        self.client = datastore.Client(kwargs['project_id'])
+        # https://google-cloud-python.readthedocs.io/en/latest/core/auth.html#service-accounts
+        self.client = datastore.Client.from_service_account_json(
+            kwargs['credentials'])
         self.kind = kwargs['kind']
 
 
@@ -77,8 +79,12 @@ class CredentialValidator(BaseDatastoreServiceObject):
     def options(cls, settings):
         """Returns options for this initiator.
         """
+        # credentials file must be in lib
+        credentials = '{}/{}'.format(
+            os.path.dirname(__file__) + '/../../lib',
+            settings['datastore.credentials'])
         return {
-            'project_id': settings['datastore.project_id'],
+            'credentials': credentials,
             'kind': settings['datastore.kind'],
         }
 
