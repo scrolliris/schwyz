@@ -55,7 +55,7 @@ class BaseDynamoDBServiceObject(object):
             'use_ssl': True,
             'region_name': kwargs['region_name']
         }
-        if kwargs.get('endpoint_url', ''):
+        if 'endpoint_url' in kwargs and kwargs['endpoint_url']:
             options['endpoint_url'] = kwargs['endpoint_url']
         self.db = session.resource('dynamodb', **options)
         self.table = self.db.Table(kwargs['table_name'])
@@ -88,10 +88,14 @@ class CredentialValidator(BaseDatastoreServiceObject):
             credentials = '{}/{}'.format(
                 os.path.dirname(__file__) + '/../../lib',
                 os.path.basename(settings['gcp.account_redentials']))
-        return {
+        _options = {
             'credentials': credentials,
             'kind': settings['datastore.entity_kind'],
         }
+        if 'datastore.emulator_host' in settings and \
+            settings['datastore.emulator_host']:
+            _options['emulator_host'] = settings['datastore.emulator_host']
+        return _options
 
     def validate(self, project_id='', api_key='', context='read'):
         """Validates project_id (project_access_key_id) and api_key.
@@ -123,13 +127,15 @@ class SessionInitiator(BaseDynamoDBServiceObject):
     def options(cls, settings):
         """Returns options for this initiator.
         """
-        return {
+        _options = {
             'aws_access_key_id': settings['aws.access_key_id'],
             'aws_secret_access_key': settings['aws.secret_access_key'],
             'region_name': settings['dynamodb.region_name'],
-            'endpoint_url': settings['dynamodb.endpoint_url'],
             'table_name': settings['dynamodb.table_name'],
         }
+        if settings['dynamodb.endpoint_url']:
+            _options['endpoint_url'] = settings['dynamodb.endpoint_url']
+        return _options
 
     @classmethod
     def generate_token(cls):
