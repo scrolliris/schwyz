@@ -87,7 +87,7 @@ class CredentialValidator(BaseDatastoreServiceObject):
         if settings['gcp.account_credentials']:
             credentials = '{}/{}'.format(
                 os.path.dirname(__file__) + '/../../lib',
-                os.path.basename(settings['gcp.account_redentials']))
+                os.path.basename(settings['gcp.account_credentials']))
         _options = {
             'credentials': credentials,
             'kind': settings['datastore.entity_kind'],
