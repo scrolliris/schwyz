@@ -75,5 +75,6 @@ setup(
     [console_scripts]
     puteoli_pserve = puteoli.scripts.pserve:main
     puteoli_pstart = puteoli.scripts.pstart:main
+    puteoli_manage = puteoli.scripts.manage:main
     """,
 )

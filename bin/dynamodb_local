@@ -1,0 +1,15 @@
+#!/bin/sh
+
+root_dir=$(dirname $(dirname $(readlink -f $0)))
+name="dynamodb_local"
+version="latest"
+
+lib_path=$root_dir/lib/${name}_$version/DynamoDBLocal_lib
+jar_file=$root_dir/lib/${name}_$version/DynamoDBLocal.jar
+
+java -Djava.library.path=$lib_path -jar $jar_file \
+    -delayTransientStatuses \
+    -sharedDb \
+    -cors '*' \
+    -inMemory \
+    -port 8001

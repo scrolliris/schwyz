@@ -1,0 +1,32 @@
+#!/bin/sh
+set -eu
+
+root_dir=$(dirname $(dirname $(readlink -f $0)))
+lib_dir=$root_dir/lib
+
+name="dynamodb_local"
+
+platform="*"
+version="latest"
+file="${name}_${version}.tar.gz"
+location="http://dynamodb-local.s3-website-us-west-2.amazonaws.com/${file}"
+
+indent() {
+  sed -u 's/^/       /'
+}
+
+echo "Library: ${name}_${version} (lib)"
+echo "Platform... ${platform}"
+echo "Version... ${version}"
+echo -en "\n"
+
+cd $lib_dir
+
+echo "-----> Fetching... from ${location}"
+curl -sL $location -o $file
+
+echo "-----> Extracting... as ${name}"
+mkdir ${name}_$version
+tar zxvf $file -C ${name}_$version | indent
+cd $root_dir
+echo "Done" | indent

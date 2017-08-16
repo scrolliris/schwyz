@@ -18,6 +18,18 @@ serve:
 	./bin/serve --env ${env} --config config/${env}.ini --reload
 .PHONY: serve
 
+# database
+
+db-init:
+	puteoli_manage 'config/${env}.ini#puteoli' db init
+.PHONY: db-init
+
+# datastore
+
+ds-seed:
+	puteoli_manage 'config/${env}.ini#puteoli' ds seed
+.PHONY: ds-seed
+
 # testing
 
 test:
@@ -42,7 +54,7 @@ clean:
 	find . ! -readable -prune -o -print \
 	       ! -path "./.git/*" ! -path "./node_modules/*" ! -path "./venv*" \
 	       ! -path "./doc/*" ! -path "./tmp/_cache*" ! -path "./tmp/_data*" \
-				 ! -path "./lib/*" | \
+	       ! -path "./lib/*" | \
 	  grep -E "(__pycache__|\.egg-info|\.pyc|\.pyo)" | xargs rm -rf;
 ifneq (, $(shell which gulp 2>/dev/null))
 	gulp clean

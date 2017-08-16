@@ -66,9 +66,12 @@ class BaseDatastoreServiceObject(object):
     """Service using GCP Datastore.
     """
     def __init__(self, *_, **kwargs):
-        # https://google-cloud-python.readthedocs.io/en/latest/core/auth.html#service-accounts
-        self.client = datastore.Client.from_service_account_json(
-            kwargs['credentials'])
+        if kwargs['credentials']:
+            # https://google-cloud-python.readthedocs.io/en/latest/core/auth.html#service-accounts
+            self.client = datastore.Client.from_service_account_json(
+                kwargs['credentials'])
+        else:
+            self.client = datastore.Client()
         self.kind = kwargs['kind']
 
 
@@ -80,12 +83,14 @@ class CredentialValidator(BaseDatastoreServiceObject):
         """Returns options for this initiator.
         """
         # credentials file must be in lib
-        credentials = '{}/{}'.format(
-            os.path.dirname(__file__) + '/../../lib',
-            os.path.basename(settings['datastore.credentials']))
+        credentials = ''
+        if settings['gcp.account_credentials']:
+            credentials = '{}/{}'.format(
+                os.path.dirname(__file__) + '/../../lib',
+                os.path.basename(settings['gcp.account_redentials']))
         return {
             'credentials': credentials,
-            'kind': settings['datastore.kind'],
+            'kind': settings['datastore.entity_kind'],
         }
 
     def validate(self, project_id='', api_key='', context='read'):
@@ -121,9 +126,9 @@ class SessionInitiator(BaseDynamoDBServiceObject):
         return {
             'aws_access_key_id': settings['aws.access_key_id'],
             'aws_secret_access_key': settings['aws.secret_access_key'],
-            'region_name': settings['db.region_name'],
-            'endpoint_url': settings['db.endpoint_url'],
-            'table_name': settings['db.session_table_name'],
+            'region_name': settings['dynamodb.region_name'],
+            'endpoint_url': settings['dynamodb.endpoint_url'],
+            'table_name': settings['dynamodb.table_name'],
         }
 
     @classmethod

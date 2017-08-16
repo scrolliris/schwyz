@@ -25,7 +25,8 @@ https://gitlab.com/lupine-software/puteoli)
 
 * Python `3.5.0`
 * Node.js `7.8.0` (build)
-
+* DynamoDB
+* Datastore
 
 ## Setup
 
@@ -67,6 +68,13 @@ Check `Makefile`.
 
 : run server
 (venv) % make serve
+```
+
+TODO
+
+```zsh
+(venv) % ./bin/dynamodb_local
+(venv) % ./bin/datastore_local --project <PROJECT_ID> --clean
 ```
 
 
