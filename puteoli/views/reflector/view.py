@@ -40,8 +40,8 @@ def reflector_canvas(req):
     if not token:
         logger.error('no token')
         raise exc.HTTPInternalServerError()
-
-    result = render(tpl_dst('reflector-canvas', ext), {}, req)
+    # minified
+    result = render(tpl_dst('reflector-canvas', ext), dict(token=token), req)
     res = Response(result)
     res.content_type = 'text/{0:s}'.format(
         'javascript' if ext == 'js' else 'css')
