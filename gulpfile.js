@@ -57,6 +57,7 @@ gulp.task('distribute:widget', ['env'], function() {
     file.basename = file.basename.replace(new RegExp('^' + prefix), '');
     file.extname += '.mako';
   }))
+  .pipe(replace(/\|\|(\(o\.csrfToken=)""\);/, '\|\|$1"${token}"\);'))
   .pipe(gulp.dest('static'));
 })
 
