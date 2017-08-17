@@ -7,7 +7,7 @@ import pyramid.httpexceptions as exc
 
 from puteoli import logger
 from puteoli.views import no_cache, tpl_dst
-from puteoli.services import IInitiator
+from puteoli.services import IInitiator, IValidator
 
 
 @view_config(route_name='reflector',
@@ -34,9 +34,14 @@ def reflector_canvas(req):
     api_key = req.params['api_key']
     ext = req.matchdict['ext']
 
+    validator = req.find_service(iface=IValidator, name='credential')
+    site_id = validator.site_id
+    if not site_id:
+        raise exc.HTTPInternalServerError()
+
     initiator = req.find_service(iface=IInitiator, name='session')
-    token = initiator.provision(project_id=project_id, api_key=api_key,
-                                context='read')
+    token = initiator.provision(project_id=project_id, site_id=site_id,
+                                api_key=api_key, context='read')
     if not token:
         logger.error('no token')
         raise exc.HTTPInternalServerError()

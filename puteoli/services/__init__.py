@@ -5,6 +5,7 @@ import base64
 import datetime
 import logging
 import os
+import re
 import uuid
 
 import boto3
@@ -78,6 +79,10 @@ class BaseDatastoreServiceObject(object):
 class CredentialValidator(BaseDatastoreServiceObject):
     """CredentialValidator Service.
     """
+    def __init__(self, *args, **kwargs):
+        self.site = None
+        super().__init__(*args, **kwargs)
+
     @classmethod
     def options(cls, settings):
         """Returns options for this initiator.
@@ -96,6 +101,20 @@ class CredentialValidator(BaseDatastoreServiceObject):
             settings['datastore.emulator_host']:
             _options['emulator_host'] = settings['datastore.emulator_host']
         return _options
+
+    @property
+    def site_id(self):
+        """Return site_id after validation.
+        """
+        site = self.site
+        if not isinstance(site, datastore.Entity):
+            return None
+        try:
+            return int(re.sub(r'^(\d*)-(\d*)$', r'\2', site.key.name))
+        except Exception as e:  # pylint: disable=broad-except
+            logger = logging.getLogger(__name__)
+            logger.error('site_id is missing-> %s, site: %s', e, site)
+            return None
 
     def validate(self, project_id='', api_key='', context='read'):
         """Validates project_id (project_access_key_id) and api_key.
@@ -117,6 +136,9 @@ class CredentialValidator(BaseDatastoreServiceObject):
 
         if len(sites) != 1:
             return False
+
+        # set site after view
+        self.site = sites[0]
         return True
 
 
@@ -153,7 +175,7 @@ class SessionInitiator(BaseDynamoDBServiceObject):
         """
         return int(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
-    def provision(self, project_id='', api_key='', context='read'):
+    def provision(self, project_id='', site_id='', api_key='', context='read'):
         """Save new session record.
         """
         if context not in ('read', 'write'):
@@ -165,6 +187,7 @@ class SessionInitiator(BaseDynamoDBServiceObject):
                 'token': token,
                 'initiated_at': self.__class__.generate_timestamp(),
                 'project_id': project_id,
+                'site_id': site_id,
                 'context': context,
                 'api_key': api_key,
             })
