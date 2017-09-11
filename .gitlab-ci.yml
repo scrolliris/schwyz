@@ -12,6 +12,7 @@ build:
     - node --version
     - npm --version
     - npm install --global gulp-cli
+    - npm install --only=development
     - npm install --ignore-scripts
   script:
     - gulp
