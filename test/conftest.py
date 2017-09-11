@@ -39,7 +39,7 @@ def raw_settings(dotenv):
     """
     from pyramid.paster import get_appsettings
 
-    ini_file = os.path.join(os.getcwd(), 'config/testing.ini#puteoli')
+    ini_file = os.path.join(os.getcwd(), 'config', 'testing.ini#puteoli')
     return get_appsettings(ini_file)
 
 

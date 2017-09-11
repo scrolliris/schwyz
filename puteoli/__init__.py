@@ -5,7 +5,6 @@ from os import path
 import sys
 from wsgiref.handlers import BaseHandler
 
-from paste.translogger import TransLogger
 from pyramid.config import Configurator
 from pyramid.threadlocal import get_current_registry
 
@@ -90,5 +89,6 @@ def main(_, **settings):
     config.include('.route')
 
     app = config.make_wsgi_app()
-    app = TransLogger(app, setup_console_handler=False)
+    # from paste.translogger import TransLogger
+    # app = TransLogger(app, setup_console_handler=False)
     return app
