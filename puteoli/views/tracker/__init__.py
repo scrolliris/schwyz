@@ -1,7 +1,8 @@
-"""Tracker views.
+"""Tracker views
 """
 
+
 def includeme(config):
-    """Initializes tracker views.
+    """Initializes tracker views
     """
     pass

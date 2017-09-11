@@ -9,9 +9,8 @@ import re
 import uuid
 
 import boto3
-from boto3.dynamodb.conditions import Attr
 from google.cloud import datastore
-from zope.interface import Attribute, Interface
+from zope.interface import Interface
 
 
 class IValidator(Interface):
@@ -98,7 +97,7 @@ class CredentialValidator(BaseDatastoreServiceObject):
             'kind': settings['datastore.entity_kind'],
         }
         if 'datastore.emulator_host' in settings and \
-            settings['datastore.emulator_host']:
+           settings['datastore.emulator_host']:
             _options['emulator_host'] = settings['datastore.emulator_host']
         return _options
 

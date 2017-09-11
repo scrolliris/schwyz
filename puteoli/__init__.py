@@ -8,7 +8,6 @@ from wsgiref.handlers import BaseHandler
 from paste.translogger import TransLogger
 from pyramid.config import Configurator
 from pyramid.threadlocal import get_current_registry
-import pyramid.httpexceptions as exc
 
 from .env import Env
 

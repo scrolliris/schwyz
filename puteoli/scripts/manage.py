@@ -87,7 +87,6 @@ class DsCli(object):
             client.put(obj)
 
 
-
 def main(argv=sys.argv):
     """The main interface.
     """

@@ -1,7 +1,8 @@
-"""Reflector views.
+"""Reflector views
 """
 
+
 def includeme(config):
-    """Initializes reflector Views.
+    """Initializes reflector Views
     """
     pass
