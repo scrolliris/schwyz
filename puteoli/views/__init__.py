@@ -56,3 +56,14 @@ def internal_server_error(req):
     """
     body = 'Cannot {} {}'.format(req.method, req.path)
     return Response(body, status='500 Internal Server Error')
+
+
+def includeme(config):
+    """Initializes the view for puteoli
+
+    Activate this setup using ``config.include('puteoli.views')``.
+    """
+    # see route.py
+    # config.include('.tracker')
+    # config.include('.reflector')
+    pass
