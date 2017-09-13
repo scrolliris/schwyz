@@ -10,7 +10,6 @@ from pyramid.request import Request
 from pyramid.router import Router
 from webtest.app import TestApp
 
-
 # NOTE:
 # The request variable in py.test is special context of testing.
 # See http://doc.pytest.org/en/latest/fixture.html#request-context
@@ -19,6 +18,7 @@ TEST_DIR = os.path.dirname(__file__)
 INI_FILE = os.path.join(TEST_DIR, '..', 'config', 'testing.ini')
 
 # -- Shared fixtures
+
 
 @pytest.fixture(scope='session')
 def dotenv() -> None:
@@ -37,6 +37,7 @@ def env(dotenv) -> dict:
     """Returns env object
     """
     from puteoli.env import Env
+
     return Env()
 
 
@@ -45,6 +46,7 @@ def raw_settings(dotenv) -> dict:
     """Returns raw setting dict
     """
     from pyramid.paster import get_appsettings
+
     return get_appsettings('{0:s}#{1:s}'.format(INI_FILE, 'puteoli'))
 
 
