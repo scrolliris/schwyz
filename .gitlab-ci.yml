@@ -55,8 +55,8 @@ test:
     - pip --version
     - pip install --upgrade pip setuptools
   script:
-    - make setup
     - make clean
+    - make setup
     - make coverage
   cache:
     untracked: true
