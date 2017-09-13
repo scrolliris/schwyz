@@ -114,7 +114,7 @@ def config(request, settings) -> Configurator:
     config = testing.setUp(settings=settings)
     # FIXME:
     #    these includings from .ini file are not evaluated
-    #    in unit tests.
+    #    in unit tests. (pyramid.includes)
     config.include('pyramid_assetviews')
     config.include('pyramid_mako')
     config.include('pyramid_services')
@@ -123,11 +123,6 @@ def config(request, settings) -> Configurator:
     config.include('puteoli.views')
 
     config.include('puteoli.route')
-
-    # FIXME:
-    #    these includings from .ini file are not evaluated
-    #    in unit tests.
-    # config.include('pyramid_mako')
 
     def teardown() -> None:
         """The teardown function
