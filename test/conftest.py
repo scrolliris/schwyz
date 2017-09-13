@@ -5,28 +5,35 @@ import os
 
 import pytest
 
+from pyramid.config import Configurator
+from pyramid.request import Request
+from pyramid.router import Router
+from webtest.app import TestApp
+
 
 # NOTE:
 # The request variable in py.test is special context of testing.
 # See http://doc.pytest.org/en/latest/fixture.html#request-context
 
+TEST_DIR = os.path.dirname(__file__)
+INI_FILE = os.path.join(TEST_DIR, '..', 'config', 'testing.ini')
+
 # -- Shared fixtures
 
 @pytest.fixture(scope='session')
-def dotenv():
+def dotenv() -> None:
     """Loads dotenv file
     """
     from puteoli.env import Env
 
     # same as puteoli:main
-    dotenv_file = os.path.join(os.getcwd(), '.env')
+    dotenv_file = os.path.join(TEST_DIR, '..', '.env')
     Env.load_dotenv_vars(dotenv_file)
-
     return
 
 
 @pytest.fixture(scope='session')
-def env(dotenv):
+def env(dotenv) -> dict:
     """Returns env object
     """
     from puteoli.env import Env
@@ -34,17 +41,15 @@ def env(dotenv):
 
 
 @pytest.fixture(scope='session')
-def raw_settings(dotenv):
+def raw_settings(dotenv) -> dict:
     """Returns raw setting dict
     """
     from pyramid.paster import get_appsettings
-
-    ini_file = os.path.join(os.getcwd(), 'config', 'testing.ini#puteoli')
-    return get_appsettings(ini_file)
+    return get_appsettings('{0:s}#{1:s}'.format(INI_FILE, 'puteoli'))
 
 
 @pytest.fixture(scope='session')
-def resolve_settings():
+def resolve_settings() -> 'function':
     """Returns resolving function for settings
     """
     def _resolve_settings(raw_s):
@@ -55,14 +60,14 @@ def resolve_settings():
 
 
 @pytest.fixture(scope='session')
-def settings(raw_settings, resolve_settings):
+def settings(raw_settings, resolve_settings) -> 'function':
     """Returns (environ) resolved settings
     """
     return resolve_settings(raw_settings)
 
 
 @pytest.fixture(scope='session')
-def extra_environ(env):
+def extra_environ(env) -> dict:
     """Returns extra environ object
     """
     environ = {
@@ -76,21 +81,21 @@ def extra_environ(env):
 # auto fixtures
 
 @pytest.yield_fixture(autouse=True, scope='session')
-def session_helper():
+def session_helper() -> None:
     """A helper function for session scope
     """
     yield
 
 
 @pytest.yield_fixture(autouse=True, scope='module')
-def module_helper(settings):
+def module_helper(settings) -> None:
     """A helper function for module scope
     """
     yield
 
 
 @pytest.yield_fixture(autouse=True, scope='function')
-def function_helper():
+def function_helper() -> None:
     """A helper function for function scope
     """
     yield
@@ -99,13 +104,12 @@ def function_helper():
 # -- View tests
 
 @pytest.fixture(scope='session')
-def config(request, settings):
+def config(request, settings) -> Configurator:
     """Returns the testing config
     """
     from pyramid import testing
 
     config = testing.setUp(settings=settings)
-
     # FIXME:
     #    these includings from .ini file are not evaluated
     #    in unit tests.
@@ -123,7 +127,7 @@ def config(request, settings):
     #    in unit tests.
     # config.include('pyramid_mako')
 
-    def teardown():
+    def teardown() -> None:
         """The teardown function
         """
         testing.tearDown()
@@ -134,7 +138,7 @@ def config(request, settings):
 
 
 @pytest.fixture(scope='function')
-def dummy_request(extra_environ):
+def dummy_request(extra_environ) -> Request:
     """Returns Dummy request object
     """
     from pyramid import testing
@@ -159,22 +163,22 @@ def dummy_request(extra_environ):
 # -- Functional tests
 
 @pytest.fixture(scope='session')
-def _app(raw_settings):
+def _app(raw_settings) -> Router:
     """Returns the internal app of app for testing
     """
     from puteoli import main
+
     global_config = {
-        '__file__': raw_settings['__file__']
+        '__file__': INI_FILE
     }
-    del raw_settings['__file__']
+    if '__file__' in raw_settings:
+        del raw_settings['__file__']
 
     return main(global_config, **raw_settings)
 
 
 @pytest.fixture(scope='session')
-def dummy_app(_app, extra_environ):
+def dummy_app(_app, extra_environ) -> TestApp:
     """Returns a dummy test app
     """
-    from webtest import TestApp
-
     return TestApp(_app, extra_environ=extra_environ)

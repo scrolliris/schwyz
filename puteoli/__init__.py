@@ -8,7 +8,7 @@ from wsgiref.handlers import BaseHandler
 from pyramid.config import Configurator
 from pyramid.threadlocal import get_current_registry
 
-from .env import Env
+from puteoli.env import Env
 
 # -- configurations
 
