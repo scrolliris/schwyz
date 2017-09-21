@@ -23,8 +23,8 @@ https://gitlab.com/lupine-software/puteoli)
 
 ## Requirements
 
-* Python `3.5.0`
-* Node.js `7.8.0` (build)
+* Python `3.5.4`
+* Node.js `7.10.1` (build, npm `5.2.0`)
 * DynamoDB
 * Datastore
 
@@ -38,11 +38,12 @@ https://gitlab.com/lupine-software/puteoli)
 
 : node.js (e.g. nodeenv)
 (venv) % pip install nodeenv
-(venv) % nodeenv --python-virtualenv --with-npm --node=7.8.0
+(venv) % nodeenv --python-virtualenv --with-npm --node=7.10.1
 : re-activate for node.js at this time
 (venv) % source venv/bin/activate
+(venv) % npm install --global npm@5.2.0
 (venv) % npm --version
-5.3.0
+5.2.0
 ```
 
 ### Development
