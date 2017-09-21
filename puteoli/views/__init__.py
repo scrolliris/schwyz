@@ -20,7 +20,7 @@ def tpl(filename):
 def tpl_dst(filename, extname='js'):
     """{JS|CSS} Template Utility.
     """
-    return STATIC_DIR + '/dist/{0:s}.min.{1:s}.mako'.format(filename, extname)
+    return STATIC_DIR + '/dst/{0:s}.min.{1:s}.mako'.format(filename, extname)
 
 
 def no_cache(_request, response):

@@ -24,19 +24,19 @@ gulp.task('env', function() {
   if (fs.existsSync(dotenv_file)) {
     return gulp.src(dotenv_file)
     .pipe(env({file: dotenv_file, type: '.ini'}));
-  };
+  }
 })
 
 // -- [build tasks]
 
 gulp.task('distribute:script', ['env'], function() {
-  // copy tracker-browser.min.js.mako into static/dist
+  // copy tracker-browser.min.js.mako into static/dst
   var pkgName = prefix + 'tracker';
   return gulp.src([
-    moduleDir + '/' + pkgName + '/dist/*-browser.min.js'
+    moduleDir + '/' + pkgName + '/dst/*-browser.min.js'
   ], {base: './'})
   .pipe(rename(function(file) {
-    file.dirname = 'dist';
+    file.dirname = 'dst';
     file.basename = file.basename.replace(new RegExp('^' + prefix), '');
     file.extname += '.mako';
   }))
@@ -45,15 +45,15 @@ gulp.task('distribute:script', ['env'], function() {
 })
 
 gulp.task('distribute:widget', ['env'], function() {
-  // copy reflector-{browser|canvas}.min.{css|js}.mako into static/dist
+  // copy reflector-{browser|canvas}.min.{css|js}.mako into static/dst
   var pkgName = prefix + 'reflector';
   return gulp.src([
-    moduleDir + '/' + pkgName + '/dist/*-browser.min.js'
-  , moduleDir + '/' + pkgName + '/dist/*-canvas.min.js'
-  , moduleDir + '/' + pkgName + '/dist/*-canvas.min.css'
+    moduleDir + '/' + pkgName + '/dst/*-browser.min.js'
+  , moduleDir + '/' + pkgName + '/dst/*-canvas.min.js'
+  , moduleDir + '/' + pkgName + '/dst/*-canvas.min.css'
   ], {base: './'})
   .pipe(rename(function(file) {
-    file.dirname = 'dist';
+    file.dirname = 'dst';
     file.basename = file.basename.replace(new RegExp('^' + prefix), '');
     file.extname += '.mako';
   }))
