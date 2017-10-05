@@ -14,6 +14,7 @@ package*.json
 .coverage
 *.yaml*
 
+/bin/deliver-*
 /bin/gitlab-ci-multi-runner
 
 /venv*
@@ -25,8 +26,6 @@ package*.json
 
 /lib*
 !/lib/.gitignore
-
-/bin/*.sh
 
 /tmp/logs/*.log
 /tmp/_data
