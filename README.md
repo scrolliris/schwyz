@@ -2,7 +2,7 @@
 
 `/p(j)utɪ́ːəlɑ̀ɪ/`
 
-[![pipeline status][ci-build]][commit] [![coverage report][ci-cov]][commit]
+[![pipeline status][pipeline]][commit] [![coverage report][coverage]][commit]
 
 
 
@@ -189,6 +189,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 See [LICENSE](LICENSE).
 
 
-[ci-build]: https://gitlab.com/lupine-software/puteoli/badges/master/build.svg
-[ci-cov]: https://gitlab.com/lupine-software/puteoli/badges/master/coverage.svg
+[pipeline]: https://gitlab.com/lupine-software/puteoli/badges/master/pipeline.svg
+[coverage]: https://gitlab.com/lupine-software/puteoli/badges/master/coverage.svg
 [commit]: https://gitlab.com/lupine-software/puteoli/commits/master
