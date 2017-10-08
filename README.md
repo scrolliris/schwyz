@@ -2,10 +2,10 @@
 
 `/p(j)utɪ́ːəlɑ̀ɪ/`
 
-[![build status](https://gitlab.com/lupine-software/puteoli/badges/master/build.svg)](
-https://gitlab.com/lupine-software/puteoli/commits/master) [![coverage report](
-https://gitlab.com/lupine-software/puteoli/badges/master/coverage.svg)](
-https://gitlab.com/lupine-software/puteoli/commits/master)
+[![pipeline status][ci-build]][commit] [![coverage report][ci-cov]][commit]
+
+
+
 
 ```txt
  , __                     _
@@ -17,8 +17,9 @@ https://gitlab.com/lupine-software/puteoli/commits/master)
 Puteoli; uPstrem UTility & widgEt hOsting appLIcation
 ```
 
-[https://gitlab.com/lupine-software/puteoli](
-https://gitlab.com/lupine-software/puteoli)
+## Repository
+
+https://gitlab.com/lupine-software/puteoli
 
 
 ## Requirements
@@ -27,6 +28,7 @@ https://gitlab.com/lupine-software/puteoli)
 * Node.js `7.10.1` (build, npm `5.2.0`)
 * DynamoDB
 * Datastore
+
 
 ## Setup
 
@@ -160,11 +162,33 @@ It requires `docker`.
 
 ## License
 
-Puteoli; Copyright (c) 2017 Lupine Software LLC
+```txt
+Puteoli
+Copyright (c) 2017 Lupine Software LLC
+```
 
+`AGPL-3.0`
 
-This is free software;  
-You can redistribute it and/or modify it under the terms of the
-GNU Affero General Public License (AGPL).
+The project is distributed as GNU Affero General Public License. (version 3.0)
+
+```txt
+This is free software: You can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+```
 
 See [LICENSE](LICENSE).
+
+
+[ci-build]: https://gitlab.com/lupine-software/puteoli/badges/master/build.svg
+[ci-cov]: https://gitlab.com/lupine-software/puteoli/badges/master/coverage.svg
+[commit]: https://gitlab.com/lupine-software/puteoli/commits/master
