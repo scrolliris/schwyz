@@ -19,7 +19,7 @@ Puteoli; uPstrem UTility & widgEt hOsting appLIcation
 
 ## Repository
 
-https://gitlab.com/lupine-software/puteoli
+https://gitlab.com/scrolliris/puteoli
 
 
 ## Requirements
@@ -189,6 +189,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 See [LICENSE](LICENSE).
 
 
-[pipeline]: https://gitlab.com/lupine-software/puteoli/badges/master/pipeline.svg
-[coverage]: https://gitlab.com/lupine-software/puteoli/badges/master/coverage.svg
-[commit]: https://gitlab.com/lupine-software/puteoli/commits/master
+[pipeline]: https://gitlab.com/scrolliris/puteoli/badges/master/pipeline.svg
+[coverage]: https://gitlab.com/scrolliris/puteoli/badges/master/coverage.svg
+[commit]: https://gitlab.com/scrolliris/puteoli/commits/master
