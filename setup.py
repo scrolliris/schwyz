@@ -1,4 +1,5 @@
 import os
+import sys
 
 from setuptools import setup, find_packages
 
@@ -21,6 +22,12 @@ requires = [
     'pyramid_mako',
     'pyramid_services',
 ]
+
+if sys.version_info[0] < 3:  # python 2.7
+    requires.extend([
+        'ipaddress',
+        'typing',
+    ])
 
 development_requires = [
     'flake8',
