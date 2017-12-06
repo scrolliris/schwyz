@@ -21,6 +21,7 @@ requires = [
     'pyramid_assetviews',
     'pyramid_mako',
     'pyramid_services',
+    'pytz',
 ]
 
 if sys.version_info[0] < 3:  # python 2.7

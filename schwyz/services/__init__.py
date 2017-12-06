@@ -1,14 +1,29 @@
 # pylint: disable=inherit-non-class,no-self-argument,no-method-argument
+from __future__ import absolute_import
 import base64
-import datetime
 import logging
 import os
 import re
+import sys
 import uuid
 
 import boto3
-from google.cloud import datastore
 from zope.interface import Interface
+
+try:
+    # TODO:
+    # Remove this, if this namespace issue is fixed.
+    # It's related to:
+    # * https://github.com/PyCQA/pylint/issues/1686
+    # * https://github.com/PyCQA/astroid/pull/460
+    #
+    # NOTE:
+    # A fix using `.pylintrc`
+    # init-hook='import sys; sys.path.append(
+    #     "venv27/lib/python2.7/site-packages/google/cloud/")'
+    from google.cloud import datastore
+except ImportError:
+    pass
 
 
 class IValidator(Interface):
@@ -27,7 +42,11 @@ class IInitiator(Interface):
 
 class ContextError(Exception):
     def __init__(self, value):
-        super().__init__()
+        if sys.version_info[0] > 3:
+            # pylint: disable=missing-super-argument
+            super().__init__()
+        else:
+            super(ContextError, self).__init__()
         self.value = value
 
     def __str__(self):
@@ -66,7 +85,11 @@ class BaseDatastoreServiceObject(object):
 class CredentialValidator(BaseDatastoreServiceObject):
     def __init__(self, *args, **kwargs):
         self.site = None
-        super().__init__(*args, **kwargs)
+        if sys.version_info[0] > 3:
+            # pylint: disable=missing-super-argument
+            super().__init__(*args, **kwargs)
+        else:
+            super(CredentialValidator, self).__init__(*args, **kwargs)
 
     @classmethod
     def options(cls, settings):
@@ -147,7 +170,13 @@ class SessionInitiator(BaseDynamoDBServiceObject):
           `datetime.utcnow().timestamp()` is invalid, because `timestamp()`
           method assumes that time object has local time.
         """
-        return int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+        import datetime
+        import pytz
+
+        def utcnow():
+            return datetime.datetime.now(tz=pytz.utc)
+
+        return int(utcnow().timestamp())
 
     def provision(self, project_id='', site_id='', api_key='', context='read'):
         if context not in ('read', 'write'):

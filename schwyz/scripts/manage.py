@@ -3,7 +3,22 @@ import os
 import sys
 
 import boto3
-from google.cloud import datastore
+
+try:
+    # TODO:
+    # Remove this, if this namespace issue is fixed.
+    # It's related to:
+    # * https://github.com/PyCQA/pylint/issues/1686
+    # * https://github.com/PyCQA/astroid/pull/460
+    #
+    # NOTE:
+    # A fix using `.pylintrc`
+    # init-hook='import sys; sys.path.append(
+    #     "venv27/lib/python2.7/site-packages/google/cloud/")'
+    from google.cloud import datastore
+except ImportError:
+    pass
+
 from pyramid.paster import get_appsettings, setup_logging
 from pyramid.scripts.common import parse_vars
 
