@@ -1,33 +1,35 @@
 __pycache__/
-
 *.egg-info/
 *.egg
+.cache
 
 .*-version
 
-.cache
-
 .env*
 !.env*.sample
-package*.json
-
 .coverage
-*.yaml*
+
+/*.yaml*
 
 /bin/deliver-*
 /bin/gitlab-ci-multi-runner
-
-/venv*
-/node_modules
 
 /static/*
 !/static/.gitignore
 !/static/*.txt
 
-/lib*
+/lib/*.json
+/lib/*local*
+/lib/*sdk*
+/lib/*proxy*
 !/lib/.gitignore
 
-/tmp/logs/*.log
-/tmp/_data
-/tmp/_cache
+/tmp/log
+!/tmp/log/.gitignore
+/tmp/coverage
 !/tmp/logs/.gitignore
+/tmp/_cache
+/tmp/_data
+
+/venv*
+/node_modules

@@ -1,11 +1,52 @@
 stages:
-  - build-assets
-  - check-style
-  - run-test
+  - vet
+  - build
+  - test
+
+check:
+  stage: vet
+  image: python:3.5.4
+  variables:
+    ENV: development
+    PIP_CACHE_DIR: pip-cache
+  before_script:
+    - pip install --upgrade pip setuptools
+    - python --version
+    - pip --version
+    - pip install flake8 flake8-docstrings -c constraints.txt
+    - make clean
+  script:
+    - make check
+  cache:
+    untracked: true
+    paths:
+      - pip-cache
+  except:
+    - tags
+
+lint:
+  stage: vet
+  image: python:3.5.4
+  variables:
+    PIP_CACHE_DIR: pip-cache
+  before_script:
+    - pip install --upgrade pip setuptools
+    - python --version
+    - pip --version
+    - ENV=development make setup
+    - ENV=test make setup
+  script:
+    - make lint
+  cache:
+    untracked: true
+    paths:
+      - pip-cache
+  except:
+    - tags
 
 build:
-  stage: build-assets
-  image: node:7.10.1
+  stage: build
+  image: node:8.9.0
   variables:
     NODE_ENV: production
   before_script:
@@ -15,52 +56,38 @@ build:
     - npm install --only=development
     - npm install --ignore-scripts
   script:
-    - gulp
+    - make build
   cache:
     untracked: true
     paths:
       - node_modules
-  except:
-    - tags
-
-check:
-  stage: check-style
-  image: python:3.5
-  variables:
-    ENV: development
-    PIP_CACHE_DIR: pip-cache
-  before_script:
-    - python --version
-    - pip --version
-    - pip install --upgrade pip setuptools
-  script:
-    - make clean
-    - make setup
-    - make check
-  cache:
+  artifacts:
     untracked: true
     paths:
-      - pip-cache
+      - static
   except:
     - tags
 
 test:
-  stage: run-test
-  image: python:3.5
+  stage: test
+  image: python:3.5.4
   variables:
     ENV: test
     PIP_CACHE_DIR: pip-cache
   before_script:
+    - pip install --upgrade pip setuptools
     - python --version
     - pip --version
-    - pip install --upgrade pip setuptools
-  script:
-    - make clean
     - make setup
+  script:
     - make coverage
   cache:
     untracked: true
     paths:
       - pip-cache
+  artifacts:
+    untracked: true
+    paths:
+      - tmp/coverage
   except:
     - tags

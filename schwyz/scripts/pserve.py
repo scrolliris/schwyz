@@ -2,12 +2,14 @@ import sys
 
 from pyramid.scripts.pserve import PServeCommand
 
-from puteoli.env import Env
+from schwyz.env import load_dotenv_vars
 
 
-def main(argv=sys.argv, quiet=False):
-    """ run original pserve with .env support. """
-    Env.load_dotenv_vars()
+def main(argv=None, quiet=False):
+    """Runs original pserve with .env support."""
+    if not argv:
+        argv = sys.argv
+    load_dotenv_vars()
 
     command = PServeCommand(argv, quiet=quiet)
     return command.run()

@@ -1,19 +1,16 @@
-"""Tracker view actions.
-"""
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
-from puteoli import logger
-from puteoli.views import no_cache, tpl_dst
-from puteoli.services import IInitiator, IValidator
+from schwyz import logger
+from schwyz.views import no_cache, tpl_dst
+from schwyz.services import IInitiator, IValidator
 
 
 @view_config(route_name='tracker',
              renderer=tpl_dst('tracker-browser', 'js'),
              request_method='GET')
 def tracker(req):
-    """Returns a tracker script for valid request.
-    """
+    """Returns a tracker script for valid request."""
     project_id = req.matchdict['project_id']
     api_key = req.params['api_key']
 

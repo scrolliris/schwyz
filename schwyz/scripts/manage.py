@@ -1,5 +1,4 @@
-"""Utility script for the management of datastore and database.
-"""
+import os
 import sys
 
 import boto3
@@ -7,19 +6,22 @@ from google.cloud import datastore
 from pyramid.paster import get_appsettings, setup_logging
 from pyramid.scripts.common import parse_vars
 
-from puteoli import resolve_env_vars
-from puteoli.env import Env
+from schwyz import resolve_env_vars
+from schwyz.env import load_dotenv_vars
+
+
+def usage(argv):
+    cmd = os.path.basename(argv[0])
+    print('usage: %s <config_uri> <command> <action> [var=value]\n'
+          '(example: "%s \'development.ini#\' db seed")' % (cmd, cmd))
+    sys.exit(1)
 
 
 class DbCli(object):
-    """
-    """
     def __init__(self, settings):
         self.settings = settings
 
     def init(self):
-        """Initializes table in db.
-        """
         session = boto3.session.Session(
             aws_access_key_id=self.settings['aws.access_key_id'],
             aws_secret_access_key=self.settings['aws.secret_access_key']
@@ -65,14 +67,10 @@ class DbCli(object):
 
 
 class DsCli(object):
-    """
-    """
     def __init__(self, settings):
         self.settings = settings
 
     def seed(self):
-        """Puts seed item.
-        """
         client = datastore.Client()
         with client.transaction():
             site_key = client.key(
@@ -87,16 +85,19 @@ class DsCli(object):
             client.put(obj)
 
 
-def main(argv=sys.argv):
-    """The main interface.
-    """
+def main(argv=None):
+    if not argv:
+        argv = sys.argv
+
+    if len(argv) < 4:
+        usage(argv)
     config_uri = argv[1]
     command = argv[2]
     action = argv[3]
     options = parse_vars(argv[4:])
 
     setup_logging(config_uri)
-    Env.load_dotenv_vars()
+    load_dotenv_vars()
 
     if command not in ('db', 'ds',):
         raise Exception('Run with valid command {db,ds} :\'(')

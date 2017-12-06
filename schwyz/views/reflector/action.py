@@ -1,21 +1,18 @@
-"""Reflector view actions.
-"""
 from pyramid.renderers import render
 from pyramid.response import Response
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 
-from puteoli import logger
-from puteoli.views import no_cache, tpl_dst
-from puteoli.services import IInitiator, IValidator
+from schwyz import logger
+from schwyz.views import no_cache, tpl_dst
+from schwyz.services import IInitiator, IValidator
 
 
 @view_config(route_name='reflector',
              renderer=tpl_dst('reflector-browser', 'js'),
              request_method='GET')
 def reflector(req):
-    """Returns just a reflector script for valid request.
-    """
+    """Returns just a reflector script for valid request."""
     res = req.response
     res.content_type = 'text/javascript'
     req.add_response_callback(no_cache)
@@ -25,8 +22,7 @@ def reflector(req):
 @view_config(route_name='reflector_canvas',
              request_method='GET')
 def reflector_canvas(req):
-    """Returns a reflector canvas for valid request.
-    """
+    """Returns a reflector canvas for valid request."""
     if req.matchdict['ext'] not in ('js', 'css'):
         raise exc.HTTPForbidden()
 

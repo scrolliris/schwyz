@@ -1,6 +1,6 @@
-# Puteoli
+# Schwyz
 
-`/p(j)utɪ́ːəlɑ̀ɪ/`
+`/ʃviːt͡s/`
 
 [![pipeline status][pipeline]][commit] [![coverage report][coverage]][commit]
 
@@ -8,18 +8,20 @@
 
 
 ```txt
- , __                     _
-/|/  \                   | | o
- |___/      _|_  _   __  | |
- |    |   |  |  |/  /  \_|/  |
- |     \_/|_/|_/|__/\__/ |__/|_/
+           _
+  ()      | |
+  /\  __  | |                   __
+ /  \/    |/ \   |  |  |_|   | / / _
+/(__/\___/|   |_/ \/ \/   \_/|/ /_/
+                            /|   /|
+                            \|   \|
 
-Puteoli; uPstrem UTility & widgEt hOsting appLIcation
+Schwyz; SCript and Hosted Widget for You schwyZ
 ```
 
 ## Repository
 
-https://gitlab.com/scrolliris/puteoli
+https://gitlab.com/scrolliris/schwyz
 
 
 ## Requirements
@@ -54,7 +56,7 @@ Use `waitress` as wsgi server.
 Check `Makefile`.
 
 ```zsh
-% cd /path/to/puteoli
+% cd /path/to/schwyz
 % source venv/bin/activate
 
 : set env
@@ -163,7 +165,7 @@ It requires `docker`.
 ## License
 
 ```txt
-Puteoli
+Schwyz
 Copyright (c) 2017 Lupine Software LLC
 ```
 
@@ -189,6 +191,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 See [LICENSE](LICENSE).
 
 
-[pipeline]: https://gitlab.com/scrolliris/puteoli/badges/master/pipeline.svg
-[coverage]: https://gitlab.com/scrolliris/puteoli/badges/master/coverage.svg
-[commit]: https://gitlab.com/scrolliris/puteoli/commits/master
+[pipeline]: https://gitlab.com/scrolliris/schwyz/badges/master/pipeline.svg
+[coverage]: https://gitlab.com/scrolliris/schwyz/badges/master/coverage.svg
+[commit]: https://gitlab.com/scrolliris/schwyz/commits/master

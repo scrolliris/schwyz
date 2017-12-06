@@ -1,10 +1,9 @@
 {
-  "name": "puteoli",
-  "description": "https://{script|widget}.scrolliris.io/",
+  "name": "schwyz",
   "version": "0.0.1",
   "private": true,
   "engines": {
-    "node": "7.10.1"
+    "node": "8.9.0"
   },
   "scripts": {
     "test": "node --version",
@@ -25,7 +24,7 @@
   "optionalDependencies": {
     "eslint": "4.7.1",
     "gulp-cli": "1.4.0",
-    "npm": "5.4.2"
+    "npm": "5.5.1"
   },
   "cacheDirectories": [
     "node_modules"

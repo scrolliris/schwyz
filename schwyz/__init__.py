@@ -1,5 +1,3 @@
-"""Puteoli Application.
-"""
 import logging
 from os import path
 import sys
@@ -8,7 +6,7 @@ from wsgiref.handlers import BaseHandler
 from pyramid.config import Configurator
 from pyramid.threadlocal import get_current_registry
 
-from puteoli.env import Env
+from schwyz.env import Env
 
 # -- configurations
 
@@ -39,17 +37,13 @@ logger.addHandler(sh)
 
 
 def get_settings():
-    """Returns settings from current ini.
-    """
     return get_current_registry().settings
 
 
 def resolve_env_vars(settings):
-    """Loads environment variables into settings
-    """
     env = Env()
     s = settings.copy()
-    for k, v in env.mappings.items():
+    for k, v in Env.settings_mappings().items():
         # ignores missing key or it has a already value in config
         if k not in s or s[k]:
             continue
@@ -65,8 +59,6 @@ def resolve_env_vars(settings):
 
 
 def main(_, **settings):
-    """The main function.
-    """
     from .request import CustomRequest
 
     env = Env()

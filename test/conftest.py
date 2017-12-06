@@ -1,5 +1,3 @@
-"""Configuration for testing
-"""
 # pylint: disable=redefined-outer-name,unused-argument
 import os
 
@@ -17,45 +15,34 @@ from webtest.app import TestApp
 TEST_DIR = os.path.dirname(__file__)
 INI_FILE = os.path.join(TEST_DIR, '..', 'config', 'testing.ini')
 
-# -- Shared fixtures
-
 
 @pytest.fixture(scope='session')
 def dotenv() -> None:
-    """Loads dotenv file
-    """
-    from puteoli.env import Env
+    from schwyz.env import load_dotenv_vars
 
-    # same as puteoli:main
+    # same as schwyz:main
     dotenv_file = os.path.join(TEST_DIR, '..', '.env')
-    Env.load_dotenv_vars(dotenv_file)
+    load_dotenv_vars(dotenv_file)
     return
 
 
 @pytest.fixture(scope='session')
 def env(dotenv) -> dict:
-    """Returns env object
-    """
-    from puteoli.env import Env
+    from schwyz.env import Env
 
     return Env()
 
 
 @pytest.fixture(scope='session')
 def raw_settings(dotenv) -> dict:
-    """Returns raw setting dict
-    """
     from pyramid.paster import get_appsettings
 
-    return get_appsettings('{0:s}#{1:s}'.format(INI_FILE, 'puteoli'))
+    return get_appsettings('{0:s}#{1:s}'.format(INI_FILE, 'schwyz'))
 
 
 @pytest.fixture(scope='session')
 def resolve_settings() -> 'function':
-    """Returns resolving function for settings
-    """
     def _resolve_settings(raw_s):
-        # pass
         return raw_s
 
     return _resolve_settings
@@ -63,15 +50,11 @@ def resolve_settings() -> 'function':
 
 @pytest.fixture(scope='session')
 def settings(raw_settings, resolve_settings) -> 'function':
-    """Returns (environ) resolved settings
-    """
     return resolve_settings(raw_settings)
 
 
 @pytest.fixture(scope='session')
 def extra_environ(env) -> dict:
-    """Returns extra environ object
-    """
     environ = {
         'SERVER_PORT': '80',
         'REMOTE_ADDR': '127.0.0.1',
@@ -80,49 +63,35 @@ def extra_environ(env) -> dict:
     return environ
 
 
-# auto fixtures
-
 @pytest.yield_fixture(autouse=True, scope='session')
 def session_helper() -> None:
-    """A helper function for session scope
-    """
     yield
 
 
 @pytest.yield_fixture(autouse=True, scope='module')
 def module_helper(settings) -> None:
-    """A helper function for module scope
-    """
     yield
 
 
 @pytest.yield_fixture(autouse=True, scope='function')
 def function_helper() -> None:
-    """A helper function for function scope
-    """
     yield
 
 
-# -- View tests
-
 @pytest.fixture(scope='session')
 def config(request, settings) -> Configurator:
-    """Returns the testing config
-    """
     from pyramid import testing
 
     config = testing.setUp(settings=settings)
-    # FIXME:
-    #    these includings from .ini file are not evaluated
-    #    in unit tests. (pyramid.includes)
+
     config.include('pyramid_assetviews')
     config.include('pyramid_mako')
     config.include('pyramid_services')
 
-    config.include('puteoli.services')
-    config.include('puteoli.views')
+    config.include('schwyz.services')
+    config.include('schwyz.views')
 
-    config.include('puteoli.route')
+    config.include('schwyz.route')
 
     def teardown() -> None:
         """The teardown function
@@ -136,8 +105,6 @@ def config(request, settings) -> Configurator:
 
 @pytest.fixture(scope='function')
 def dummy_request(extra_environ) -> Request:
-    """Returns Dummy request object
-    """
     from pyramid import testing
     from pyramid_services import find_service
     from zope.interface.adapter import AdapterRegistry
@@ -157,13 +124,9 @@ def dummy_request(extra_environ) -> Request:
     return req
 
 
-# -- Functional tests
-
 @pytest.fixture(scope='session')
 def _app(raw_settings) -> Router:
-    """Returns the internal app of app for testing
-    """
-    from puteoli import main
+    from schwyz import main
 
     global_config = {
         '__file__': INI_FILE
@@ -176,6 +139,4 @@ def _app(raw_settings) -> Router:
 
 @pytest.fixture(scope='session')
 def dummy_app(_app, extra_environ) -> TestApp:
-    """Returns a dummy test app
-    """
     return TestApp(_app, extra_environ=extra_environ)

@@ -1,13 +1,11 @@
-"""Setup Script.
-"""
 import os
 
 from setuptools import setup, find_packages
 
 # pylint: disable=invalid-name
 here = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(here, *('doc', 'README.rst'))) as f:
-    README = f.read()
+with open(os.path.join(here, *('doc', 'DESCRIPTION.rst'))) as f:
+    DESCRIPTION = f.read()
 with open(os.path.join(here, 'CHANGELOG')) as f:
     CHANGELOG = f.read()
 
@@ -42,10 +40,10 @@ production_requires = [
 ]
 
 setup(
-    name='puteoli',
+    name='schwyz',
     version='0.1',
-    description='Puteoli; uPstrem UTility & widgEt hOsting appLIcation',
-    long_description=README + '\n\n' + CHANGELOG,
+    description='schwyz',
+    long_description=DESCRIPTION + '\n\n' + CHANGELOG,
     classifiers=[
         "Programming Language :: Python",
         "Framework :: Pyramid",
@@ -65,16 +63,12 @@ setup(
         'production': production_requires,
     },
     install_requires=requires,
-    message_extractors={'puteoli': [
-        ('**.py', 'python', None),
-        ('static/**', 'ignore', None),
-    ]},
     entry_points="""\
     [paste.app_factory]
-    main = puteoli:main
+    main = schwyz:main
     [console_scripts]
-    puteoli_pserve = puteoli.scripts.pserve:main
-    puteoli_pstart = puteoli.scripts.pstart:main
-    puteoli_manage = puteoli.scripts.manage:main
+    schwyz_pserve = schwyz.scripts.pserve:main
+    schwyz_pstart = schwyz.scripts.pstart:main
+    schwyz_manage = schwyz.scripts.manage:main
     """,
 )
