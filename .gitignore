@@ -1,6 +1,8 @@
-__pycache__/
-*.egg-info/
+__pycache__
+*.egg-info
 *.egg
+*.pyc
+
 .cache
 
 .*-version
@@ -10,6 +12,8 @@ __pycache__/
 .coverage
 
 /*.yaml*
+/*_config.py
+/wsgi.py
 
 /bin/deliver-*
 /bin/gitlab-ci-multi-runner
