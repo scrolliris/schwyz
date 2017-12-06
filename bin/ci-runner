@@ -1,20 +1,28 @@
 #!/bin/sh
 set -x
 
-DIR_NAME=$(dirname $(dirname $(readlink -f $0)))
-ENV_FILE=".env.ci"
-ENV_OPTS="";
+dir_name=$(dirname $(dirname $(readlink -f $0)))
+job_name="${1}"
+env_file="${ENV_FILE:-.env.ci}"
+env_opts="";
 
-if [ ! -f "$ENV_FILE" ]; then
-  echo "Please create \`$ENV_FILE\` (variables)"
+if [ -z "${job_name}" ]; then
+  echo "Please specifp job name in .gitlab-ci.yml"
+  exit 2
+fi
+
+if [ ! -f "${env_file}" ]; then
+  echo "Please create \`${env_file}\` (cp ${env_file}.sample ${env_file})"
   exit 2
 fi
 
 while read line; do
-ENV_OPTS+=" --env $line"
-done < "$ENV_FILE"
+env_opts+=" --env ${line}"
+done < "${env_file}"
 
-# ci-runner test
-echo "$ENV_OPTS $1" | xargs ${DIR_NAME}/bin/gitlab-ci-multi-runner exec docker\
-  --cache-dir /cache\
-  --docker-volumes ${DIR_NAME}/tmp/_cache:/cache
+# ci-runner <job>
+echo "${env_opts} ${job_name}" | \
+  xargs $dir_name/bin/gitlab-ci-multi-runner exec docker \
+  --cache-dir /cache \
+  --docker-volumes $dir_name/tmp/_cache:/cache \
+  --docker-volumes /var/run/docker.sock:/var/run/docker.sock
