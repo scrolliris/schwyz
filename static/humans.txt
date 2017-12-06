@@ -9,6 +9,10 @@ Role: Designer
 Mail: misaki.asaka@lupine-software.com
 From: Kazo, Japan
 
+/* ABOUT US */
+Firm: Lupine Software LLC
+Site: https://lupine-software.com
+
 /* API */
-Last update: 2017/07/15
+Product: Scrolliris
 MIME type: application/json
