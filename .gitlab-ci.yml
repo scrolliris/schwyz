@@ -33,6 +33,7 @@ lint:
     - pip install --upgrade pip setuptools
     - python --version
     - pip --version
+    - ENV=production make setup
     - ENV=development make setup
     - ENV=test make setup
   script:
