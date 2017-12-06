@@ -15,8 +15,7 @@ STATIC_DIR = path.join(path.dirname(path.abspath(__file__)), '../static')
 
 # pylint: disable=protected-access
 def ignore_broken_pipes(self):
-    """Ignores unused error message about broken pipe.
-    """
+    """Ignores unused error message about broken pipe."""
     if sys.exc_info()[0] != BrokenPipeError:
         BaseHandler.__handle_error_original_(self)
 

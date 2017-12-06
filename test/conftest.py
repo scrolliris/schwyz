@@ -94,8 +94,6 @@ def config(request, settings) -> Configurator:
     config.include('schwyz.route')
 
     def teardown() -> None:
-        """The teardown function
-        """
         testing.tearDown()
 
     request.addfinalizer(teardown)

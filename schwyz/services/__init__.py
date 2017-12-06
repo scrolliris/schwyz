@@ -1,6 +1,4 @@
 # pylint: disable=inherit-non-class,no-self-argument,no-method-argument
-"""Service package.
-"""
 import base64
 import datetime
 import logging
@@ -14,8 +12,6 @@ from zope.interface import Interface
 
 
 class IValidator(Interface):
-    """Interface as validator service.
-    """
     # pylint: disable=missing-docstring
 
     def validate():
@@ -23,8 +19,6 @@ class IValidator(Interface):
 
 
 class IInitiator(Interface):
-    """Interface as initiator service.
-    """
     # pylint: disable=missing-docstring
 
     def provision():
@@ -32,8 +26,6 @@ class IInitiator(Interface):
 
 
 class ContextError(Exception):
-    """Custom error class for session context.
-    """
     def __init__(self, value):
         super().__init__()
         self.value = value
@@ -44,8 +36,6 @@ class ContextError(Exception):
 
 class BaseDynamoDBServiceObject(object):
     # pylint: disable=too-few-public-methods
-    """Service using AWS DynamoDB.
-    """
     def __init__(self, *_, **kwargs):
         session = boto3.session.Session(
             aws_access_key_id=kwargs['aws_access_key_id'],
@@ -63,8 +53,6 @@ class BaseDynamoDBServiceObject(object):
 
 class BaseDatastoreServiceObject(object):
     # pylint: disable=too-few-public-methods
-    """Service using GCP Datastore.
-    """
     def __init__(self, *_, **kwargs):
         if kwargs['credentials']:
             # https://google-cloud-python.readthedocs.io/en/latest/core/auth.html#service-accounts
@@ -76,16 +64,12 @@ class BaseDatastoreServiceObject(object):
 
 
 class CredentialValidator(BaseDatastoreServiceObject):
-    """CredentialValidator Service.
-    """
     def __init__(self, *args, **kwargs):
         self.site = None
         super().__init__(*args, **kwargs)
 
     @classmethod
     def options(cls, settings):
-        """Returns options for this initiator.
-        """
         # credentials file must be in lib
         credentials = ''
         if settings['gcp.account_credentials']:
@@ -103,8 +87,6 @@ class CredentialValidator(BaseDatastoreServiceObject):
 
     @property
     def site_id(self):
-        """Return site_id after validation.
-        """
         site = self.site
         if not isinstance(site, datastore.Entity):
             return None
@@ -116,8 +98,7 @@ class CredentialValidator(BaseDatastoreServiceObject):
             return None
 
     def validate(self, project_id='', api_key='', context='read'):
-        """Validates project_id (project_access_key_id) and api_key.
-        """
+        """Validates project_id (project_access_key_id) and api_key."""
         if context not in ('read', 'write'):
             raise ContextError('invalid context {0:s}'.format(context))
 
@@ -142,12 +123,8 @@ class CredentialValidator(BaseDatastoreServiceObject):
 
 
 class SessionInitiator(BaseDynamoDBServiceObject):
-    """SessionInitiator Service.
-    """
     @classmethod
     def options(cls, settings):
-        """Returns options for this initiator.
-        """
         _options = {
             'aws_access_key_id': settings['aws.access_key_id'],
             'aws_secret_access_key': settings['aws.secret_access_key'],
@@ -160,8 +137,6 @@ class SessionInitiator(BaseDynamoDBServiceObject):
 
     @classmethod
     def generate_token(cls):
-        """Generates uuid4 based token.
-        """
         return base64.urlsafe_b64encode(uuid.uuid4().bytes).decode('utf-8')
 
     @classmethod
@@ -175,8 +150,6 @@ class SessionInitiator(BaseDynamoDBServiceObject):
         return int(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
     def provision(self, project_id='', site_id='', api_key='', context='read'):
-        """Save new session record.
-        """
         if context not in ('read', 'write'):
             raise ContextError('invalid context {0:s}'.format(context))
 
@@ -198,12 +171,7 @@ class SessionInitiator(BaseDynamoDBServiceObject):
 
 
 def credential_validator_factory():
-    """The credential validator service factory.
-    """
-
     def _credential_validator(_, req):
-        """Actual validator factory method.
-        """
         options = CredentialValidator.options(req.settings)
         return CredentialValidator(req, **options)
 
@@ -211,12 +179,7 @@ def credential_validator_factory():
 
 
 def session_initiator_factory():
-    """The session initiator service factory.
-    """
-
     def _session_initiator(_, req):
-        """Actual initiator factory method.
-        """
         options = SessionInitiator.options(req.settings)
         return SessionInitiator(req, **options)
 
@@ -224,8 +187,6 @@ def session_initiator_factory():
 
 
 def includeme(config):
-    """Initializes service objects.
-    """
     config.register_service_factory(
         credential_validator_factory(),
         iface=IValidator,

@@ -1,5 +1,3 @@
-"""Route package.
-"""
 import pyramid.httpexceptions as exc
 
 from . import logger, Env
@@ -7,11 +5,8 @@ from .services import IValidator
 
 
 def ext_predicator_factory(ext):
-    """Returns actual extension predicator.
-    """
+    """Returns actual extension predicator."""
     def _ext_predicator(inf, _req):
-        """Validates `ext`.
-        """
         if not isinstance(ext, (list, tuple)):
             return False
 
@@ -24,8 +19,7 @@ def ext_predicator_factory(ext):
 
 
 def credential_predicator(inf, req):
-    """Validates `project_id` and `api_key` using CredentialValidator.
-    """
+    """Validates `project_id` and `api_key` using CredentialValidator."""
     route_name = inf['route'].name
     if route_name in ('tracker', 'reflector', 'reflector_canvas'):
         if 'api_key' not in req.params:
@@ -50,8 +44,6 @@ def credential_predicator(inf, req):
 
 
 def includeme(config):
-    """Initializes routes.
-    """
     env = Env()
     js_predicator = ext_predicator_factory(['js'])
 
