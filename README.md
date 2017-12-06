@@ -27,7 +27,7 @@ https://gitlab.com/scrolliris/schwyz
 ## Requirements
 
 * Python `3.5.4`
-* Node.js `7.10.1` (build, npm `5.2.0`)
+* Node.js `8.9.0` (build, npm `5.5.1`)
 * DynamoDB
 * Datastore
 
@@ -69,7 +69,8 @@ Check `Makefile`.
 (venv) % npm install --global gulp-cli eslint
 (venv) % npm install --ignore-scripts
 
-(venv) % gulp
+: run gulp
+(venv) % make build
 
 : run server
 (venv) % make serve
@@ -113,7 +114,7 @@ E.g. Google App Engine
   downloads/google-cloud-sdk-<VERSION>-linux-x86_64.tar.gz
 
 : check sha256 checksum
-(venv) % echo "<CHECKSUM>" "" ./google-cloud-sdk-<VERSION>-linux-x86_64.tar.gz \
+(venv) % echo "CHECKSUM" "" ./google-cloud-sdk-<VERSION>-linux-x86_64.tar.gz \
   | sha256sum -c -
 ./google-cloud-sdk-<VERSION>-linux-x86_64.tar.gz: OK
 (venv) % tar zxvf google-cloud-sdk-<VERSION>-linux-x86_64.tar.gz
@@ -138,14 +139,32 @@ E.g. to publish to gcp (appengine)
 ```
 
 
-## Style check & Lint
+### Style Check and Lint
 
 * flake8
+* flake8-docstrings (pep257)
 * pylint
+* eslint
+
+#### Python
 
 ```zsh
-: check style with flake8
+: add hook
+(venv) % flake8 --install-hook git
+
 (venv) % make check
+(venv) % make lint
+
+: run both
+(venv) % make vet
+```
+
+#### JavaScript
+
+```zsh
+(venv) % npm install eslint -g
+
+(venv) % eslint gulpfile.js
 ```
 
 
