@@ -1,4 +1,6 @@
+from __future__ import absolute_import
 import logging
+import socket
 from os import path
 import sys
 from wsgiref.handlers import BaseHandler
@@ -16,7 +18,11 @@ STATIC_DIR = path.join(path.dirname(path.abspath(__file__)), '../static')
 # pylint: disable=protected-access
 def ignore_broken_pipes(self):
     """Ignores unused error message about broken pipe."""
-    if sys.exc_info()[0] != BrokenPipeError:
+    try:
+        ex = BrokenPipeError
+    except NameError:
+        ex = socket.error
+    if sys.exc_info()[0] != ex:
         BaseHandler.__handle_error_original_(self)
 
 

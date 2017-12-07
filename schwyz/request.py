@@ -1,5 +1,6 @@
 import re
 import ipaddress
+import sys
 
 from pyramid.decorator import reify
 from pyramid.request import Request
@@ -12,12 +13,12 @@ IPV4_ADDR = re.compile(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
 IPV6_ADDR = re.compile(r'[0-9a-f]+[0-9a-f:]+')
 
 TRUSTED_NETWORKS = [ipaddress.ip_network(n) for n in [
-    '127.0.0.1',       # localhost ipv4
-    '::1',             # localhost ipv6
-    '10.0.0.0/8',      # private ipv4 range
-    '172.16.0.0/12',   # private ipv4 range
-    '192.168.0.0/16',  # private ipv4 range
-    'fc00::/7',        # private ipv6 range
+    u'127.0.0.1',       # localhost ipv4
+    u'::1',             # localhost ipv6
+    u'10.0.0.0/8',      # private ipv4 range
+    u'172.16.0.0/12',   # private ipv4 range
+    u'192.168.0.0/16',  # private ipv4 range
+    u'fc00::/7',        # private ipv6 range
 ]]
 
 ASSET_PATH = re.compile(r'\/?(assets|favicon\.ico|.*\.txt)')
@@ -35,7 +36,12 @@ class CustomRequest(Request):  # pylint: disable=too-many-ancestors
             env_dict = self.__class__.trim_port(env_dict)
 
         new_args = (env_dict, args[1:])
-        super().__init__(*new_args, **kwargs)
+
+        if sys.version_info[0] > 3:
+            # pylint: disable=missing-super-argument
+            super().__init__(*new_args, **kwargs)
+        else:
+            super(CustomRequest, self).__init__(*new_args, **kwargs)
 
     @classmethod
     def trim_port(cls, env_dict):
