@@ -28,7 +28,7 @@ def wsgi_app(argv=None):
     load_dotenv_vars()
 
     config_uri = argv[1] if 1 in argv else 'config/production.ini'
-    app = get_app(config_uri, 'winterthur')
+    app = get_app(config_uri, 'schwyz')
     setup_logging(config_uri)
 
     return app
