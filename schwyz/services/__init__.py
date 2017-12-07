@@ -187,7 +187,6 @@ class SessionInitiator(BaseDynamoDBServiceObject):
         dt = datetime.datetime.now(tz=pytz.utc)
         return int(time.mktime(dt.timetuple()))
 
-
     def provision(self, project_id='', site_id='', api_key='', context='read'):
         if context not in ('read', 'write'):
             raise ContextError('invalid context {0:s}'.format(context))
