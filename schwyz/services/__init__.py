@@ -172,11 +172,21 @@ class SessionInitiator(BaseDynamoDBServiceObject):
         """
         import datetime
         import pytz
+        import time
 
-        def utcnow():
-            return datetime.datetime.now(tz=pytz.utc)
+        # NOTE:
+        # this method returns unix timestamp in seconds.
+        #
+        # >>> dt = datetime.datetime.now(tz=pytz.utc)
+        # >>> time.mktime(dt.timetuple())
+        # 1512592023.0
+        #
+        # only in python 3
+        # >>> dt.timestamp()
+        # 1512624423.035536
+        dt = datetime.datetime.now(tz=pytz.utc)
+        return int(time.mktime(dt.timetuple()))
 
-        return int(utcnow().timestamp())
 
     def provision(self, project_id='', site_id='', api_key='', context='read'):
         if context not in ('read', 'write'):
