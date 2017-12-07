@@ -27,8 +27,9 @@ requires = [
 if sys.version_info[0] < 3:  # python 2.7
     requires.extend([
         'ipaddress',
-        'requests',
         'typing',
+
+        'requests[security]',
         'urllib3[secure]',
     ])
 

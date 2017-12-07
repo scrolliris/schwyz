@@ -1,4 +1,4 @@
-boto3==1.4.8
+boto3==1.4.7
 google-cloud-datastore==1.4.0
 Paste==2.0.3
 PasteScript==2.0.2
