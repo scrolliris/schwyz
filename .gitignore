@@ -27,6 +27,7 @@ __pycache__
 /lib/*sdk*
 /lib/*proxy*
 !/lib/.gitignore
+/vendor
 
 /tmp/log
 !/tmp/log/.gitignore
