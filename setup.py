@@ -27,7 +27,9 @@ requires = [
 if sys.version_info[0] < 3:  # python 2.7
     requires.extend([
         'ipaddress',
+        'requests',
         'typing',
+        'urllib3',
     ])
 
 development_requires = [
