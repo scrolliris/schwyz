@@ -29,7 +29,7 @@ if sys.version_info[0] < 3:  # python 2.7
         'ipaddress',
         'requests',
         'typing',
-        'urllib3',
+        'urllib3[secure]',
     ])
 
 development_requires = [
