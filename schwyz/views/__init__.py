@@ -44,12 +44,10 @@ def internal_server_error(req):
     return Response(body, status='500 Internal Server Error')
 
 
-def includeme(_config):
+def includeme(config):
     """Initializes the view for schwyz.
 
     Activate this setup using ``config.include('schwyz.views')``.
     """
-    # see route.py
-    # config.include('.tracker')
-    # config.include('.reflector')
-    pass
+    config.include('.tracker')
+    config.include('.minimap')

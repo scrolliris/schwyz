@@ -1,7 +1,7 @@
 import pyramid.httpexceptions as exc
 
-from . import logger, Env
-from .services import IValidator
+from schwyz import logger
+from schwyz.services import IValidator
 
 
 def ext_predicator_factory(ext):
@@ -21,7 +21,11 @@ def ext_predicator_factory(ext):
 def credential_predicator(inf, req):
     """Validates `project_id` and `api_key` using CredentialValidator."""
     route_name = inf['route'].name
-    if route_name in ('tracker', 'reflector', 'reflector_canvas'):
+    valid_routes = (
+        'tracker',
+        'minimap', 'minimap_canvas'
+    )
+    if route_name in valid_routes:
         if 'api_key' not in req.params:
             raise exc.HTTPForbidden()
 
@@ -44,30 +48,29 @@ def credential_predicator(inf, req):
 
 
 def includeme(config):
-    env = Env()
-    js_predicator = ext_predicator_factory(['js'])
+    only_javascript = ext_predicator_factory(['js'])
+    both_components = ext_predicator_factory(['js', 'css'])
 
-    if env.get('VIEW_TYPE') == 'tracker':
-        config.add_route(
-            'tracker',
-            '/projects/{project_id}/tracker.{ext}',
-            custom_predicates=(js_predicator, credential_predicator,)
-        )
-        config.scan('.views.tracker')
-        config.include('.views.tracker')
+    # v1.0
+    # -- script
+    # tracker
+    config.add_route(
+        'tracker',
+        '/script/v1.0/project/{project_id}/tracker.{ext}',
+        custom_predicates=(only_javascript, credential_predicator,)
+    )
 
-    if env.get('VIEW_TYPE') == 'reflector':
-        asset_preficator = ext_predicator_factory(['js', 'css'])
-
-        config.add_route(
-            'reflector',
-            '/projects/{project_id}/reflector.{ext}',
-            custom_predicates=(js_predicator, credential_predicator,)
-        )
-        config.add_route(
-            'reflector_canvas',
-            '/projects/{project_id}/reflector-canvas.{ext}',
-            custom_predicates=(asset_preficator, credential_predicator,)
-        )
-        config.scan('.views.reflector')
-        config.include('.views.reflector')
+    # -- widget
+    # minimap (reflector)
+    config.add_route(
+        'minimap',
+        '/widget/v1.0/project/{project_id}/minimap.{ext}',
+        custom_predicates=(only_javascript, credential_predicator,)
+    )
+    config.add_route(
+        'minimap_canvas',
+        '/widget/v1.0/project/{project_id}/minimap-canvas.{ext}',
+        custom_predicates=(both_components, credential_predicator,)
+    )
+    # overlay (reflector)
+    # TODO

@@ -92,6 +92,9 @@ class DsCli(object):
             site_key = client.key(
                 self.settings['datastore.entity_kind'], '1-1')
             obj = datastore.Entity(key=site_key)
+            # TODO
+            # this is static single record for development.
+            # use seeds yaml
             obj.update({
                 'project_access_key_id': 'PROJECT_ID',
                 'site_id': '1',
@@ -113,7 +116,6 @@ def main(argv=None):
     options = parse_vars(argv[4:])
 
     setup_logging(config_uri)
-    load_dotenv_vars()
 
     if command not in ('db', 'ds',):
         raise Exception('Run with valid command {db,ds} :\'(')
@@ -131,6 +133,7 @@ def main(argv=None):
         raise Exception(err_msg.format('|'.join(actions)))
 
     settings = get_appsettings(config_uri, options=options)
+    load_dotenv_vars()
     settings = resolve_env_vars(settings)
 
     cli = '{0}{1}'.format(command.capitalize(), 'Cli')

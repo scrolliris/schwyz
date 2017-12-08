@@ -83,12 +83,6 @@ TODO
 (venv) % ./bin/datastore_local --project <PROJECT_ID> --clean
 ```
 
-
-## Configuration
-
-Set `VIEW_TYPE={tracker|reflector}` as environment variable.
-
-
 ## Deployment
 
 ### Serve
