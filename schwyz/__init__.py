@@ -3,6 +3,7 @@ import logging
 import socket
 from os import path
 import sys
+import types
 from wsgiref.handlers import BaseHandler
 
 from pyramid.config import Configurator
@@ -45,20 +46,35 @@ def get_settings():
     return get_current_registry().settings
 
 
+def get_expected_env_value_from(env, key, expected_type):
+    """Get value(s) through environment variable."""
+    value = env.get(key, None)
+    if not isinstance(value, expected_type):
+        return None
+    # split, but ignore empty string
+    if ',' in value:
+        value = [v for v in value.split(',') if v != '']
+    return value
+
+
 def resolve_env_vars(settings):
     env = Env()
     s = settings.copy()
-    for k, v in Env.settings_mappings().items():
+
+    string_type = str
+    if sys.version_info[0] < 3:
+        try:
+            # `types.StringTypes` works also in Python2.7's unicode
+            string_type = types.StringTypes
+        except AttributeError:
+            pass
+
+    for k, k_upper in Env.settings_mappings().items():
         # ignores missing key or it has a already value in config
         if k not in s or s[k]:
             continue
-        new_v = env.get(v, None)
-        if not isinstance(new_v, str):
-            continue
-        # ignores empty string
-        if ',' in new_v:
-            s[k] = [nv for nv in new_v.split(',') if nv != '']
-        elif new_v:
+        new_v = get_expected_env_value_from(env, k_upper, string_type)
+        if new_v:
             s[k] = new_v
     return s
 
@@ -80,9 +96,9 @@ def main(_, **settings):
         config.add_asset_views(
             STATIC_DIR, filenames=filenames, http_cache=cache_max_age)
 
-    config.scan('.request')
-    config.include('.services')
+    config.scan()
 
+    config.include('.services')
     config.include('.route')
 
     app = config.make_wsgi_app()

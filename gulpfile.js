@@ -30,6 +30,7 @@ gulp.task('env', function() {
 // -- [build tasks]
 
 gulp.task('distribute:script', ['env'], function() {
+  // -- tracker
   // copy tracker-browser.min.js.mako into static/dst
   var pkgName = prefix + 'tracker';
   return gulp.src([
@@ -45,10 +46,13 @@ gulp.task('distribute:script', ['env'], function() {
 })
 
 gulp.task('distribute:widget', ['env'], function() {
-  // copy reflector-{browser|canvas}.min.{css|js}.mako into static/dst
+  // -- minimap
+  // copy reflector-browser.js and
+  // reflector-{minimap|overlay}.min.{css|js}.mako into static/dst
   var pkgName = prefix + 'reflector';
   return gulp.src([
     moduleDir + '/' + pkgName + '/dst/*-browser.min.js'
+    // TODO canvas -> minimap (sierre)
   , moduleDir + '/' + pkgName + '/dst/*-canvas.min.js'
   , moduleDir + '/' + pkgName + '/dst/*-canvas.min.css'
   ], {base: './'})
@@ -59,6 +63,14 @@ gulp.task('distribute:widget', ['env'], function() {
   }))
   .pipe(replace(/\|\|(\(o\.csrfToken=)""\);/, '\|\|$1"${token}"\);'))
   .pipe(gulp.dest('static'));
+  // -- overlay
+  // TODO
+  // hreturn gulp.src([
+  //   moduleDir + '/' + pkgName + '/dst/*-browser.min.js'
+  // , moduleDir + '/' + pkgName + '/dst/*-overlay.min.js'
+  // , moduleDir + '/' + pkgName + '/dst/*-overlay.min.css'
+  // ], {base: './'})
+  // ...
 })
 
 gulp.task('distribute:all', ['env'], function() {

@@ -8,24 +8,28 @@ from schwyz.views import no_cache, tpl_dst
 from schwyz.services import IInitiator, IValidator
 
 
-@view_config(route_name='reflector',
-             renderer=tpl_dst('reflector-browser', 'js'),
+@view_config(route_name='minimap',
+             renderer=tpl_dst('minimap-browser', 'js'),
              request_method='GET')
-def reflector(req):
-    """Returns just a reflector script for valid request."""
+def minimap(req):
+    """Returns just a minimap widget for valid request."""
+    # version 1.0
     res = req.response
     res.content_type = 'text/javascript'
     req.add_response_callback(no_cache)
+    # TODO:
+    # Use CDN
     return dict()
 
 
-@view_config(route_name='reflector_canvas',
+@view_config(route_name='minimap_canvas',
              request_method='GET')
-def reflector_canvas(req):
-    """Returns a reflector canvas for valid request."""
+def minimap_canvas(req):
+    """Returns a minimap canvas for valid request."""
     if req.matchdict['ext'] not in ('js', 'css'):
         raise exc.HTTPForbidden()
 
+    # version 1.0
     project_id = req.matchdict['project_id']
     api_key = req.params['api_key']
     ext = req.matchdict['ext']
@@ -42,7 +46,7 @@ def reflector_canvas(req):
         logger.error('no token')
         raise exc.HTTPInternalServerError()
     # minified
-    result = render(tpl_dst('reflector-canvas', ext), dict(token=token), req)
+    result = render(tpl_dst('minimap-canvas', ext), dict(token=token), req)
     res = Response(result)
     res.content_type = 'text/{0:s}'.format(
         'javascript' if ext == 'js' else 'css')
