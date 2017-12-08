@@ -15,8 +15,8 @@ __pycache__
 /*_config.py
 /wsgi.py
 
-/bin/deliver-*
-/bin/gitlab-ci-multi-runner
+/bin/deliver*
+/bin/*-runner
 
 /static/*
 !/static/.gitignore
