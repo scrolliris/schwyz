@@ -96,7 +96,7 @@ build:
     - node --version
     - npm --version
     - npm install --global gulp-cli
-    - npm install --only=development
+    - npm install --only=development --ignore-scripts
     - npm install --ignore-scripts
   script:
     - make build
