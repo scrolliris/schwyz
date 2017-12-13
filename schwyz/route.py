@@ -77,12 +77,12 @@ def includeme(config):
         custom_predicates=(both_components, credential_predicator,)
     )
     # TODO
-    ## addon:type: heatmap-overlay (extension: layer)
-    #config.add_route(
-    #    'heatmap_overlay',
-    #    '/widget/v1.0/projects/{project_id}/heatmap-overlay.{ext}',
-    #    custom_predicates=(both_components, credential_predicator,)
-    #)
+    # # addon:type: heatmap-overlay (extension: layer)
+    # config.add_route(
+    #     'heatmap_overlay',
+    #     '/widget/v1.0/projects/{project_id}/heatmap-overlay.{ext}',
+    #     custom_predicates=(both_components, credential_predicator,)
+    # )
 
     # -- plugin
     # badge: coverage (through winterthur)
