@@ -42,6 +42,7 @@ development_requires = [
 testing_requires = [
     'pytest',
     'pytest-cov',
+    'pytest-mock',
     'WebTest',
 ]
 

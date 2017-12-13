@@ -22,8 +22,8 @@ def credential_predicator(inf, req):
     """Validates `project_id` and `api_key` using CredentialValidator."""
     route_name = inf['route'].name
     valid_routes = (
-        'tracker',
-        'minimap', 'minimap_canvas'
+        'measure',  # context: write
+        'heatmap', 'heatmap_minimap'  # context: read
     )
     if route_name in valid_routes:
         if 'api_key' not in req.params:
@@ -31,7 +31,7 @@ def credential_predicator(inf, req):
 
         project_id = inf['match']['project_id']
         api_key = req.params['api_key']
-        context = 'write' if route_name == 'tracker' else 'read'
+        context = 'write' if route_name == 'measure' else 'read'
 
         logger.info('project_id -> %s, api_key -> %s, context -> %s',
                     project_id, api_key, context)
@@ -51,26 +51,43 @@ def includeme(config):
     only_javascript = ext_predicator_factory(['js'])
     both_components = ext_predicator_factory(['js', 'css'])
 
+    # latest
     # v1.0
-    # -- script
-    # tracker
+
+    # [v1.0]
+    # -- script / tracker
+    # measure (scrolliris-readability-tracker)
     config.add_route(
-        'tracker',
-        '/script/v1.0/project/{project_id}/tracker.{ext}',
+        'measure',
+        '/script/v1.0/projects/{project_id}/measure.{ext}',
         custom_predicates=(only_javascript, credential_predicator,)
     )
 
-    # -- widget
-    # minimap (reflector)
+    # -- widget / reflector
+    # heatmap (scrolliris-readability-reflector)
     config.add_route(
-        'minimap',
-        '/widget/v1.0/project/{project_id}/minimap.{ext}',
+        'heatmap',
+        '/widget/v1.0/projects/{project_id}/heatmap.{ext}',
         custom_predicates=(only_javascript, credential_predicator,)
     )
+    # addon:type: heatmap-minimap (extension: frame)
     config.add_route(
-        'minimap_canvas',
-        '/widget/v1.0/project/{project_id}/minimap-canvas.{ext}',
+        'heatmap_minimap',
+        '/widget/v1.0/projects/{project_id}/heatmap-minimap.{ext}',
         custom_predicates=(both_components, credential_predicator,)
     )
-    # overlay (reflector)
     # TODO
+    ## addon:type: heatmap-overlay (extension: layer)
+    #config.add_route(
+    #    'heatmap_overlay',
+    #    '/widget/v1.0/projects/{project_id}/heatmap-overlay.{ext}',
+    #    custom_predicates=(both_components, credential_predicator,)
+    #)
+
+    # -- plugin
+    # badge: coverage (through winterthur)
+    # TODO: /plugin/v1.0/project/{project_id}/coverage.svg?type=ratio
+    # TODO: /plugin/v1.0/project/{project_id}/coverage.svg?type=score
+
+    # badge: tracking (through st.gallen)
+    # TODO: /plugin/v1.0/project/{project_id}/tracking.svg

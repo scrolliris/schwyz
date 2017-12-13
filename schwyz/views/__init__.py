@@ -50,4 +50,4 @@ def includeme(config):
     Activate this setup using ``config.include('schwyz.views')``.
     """
     config.include('.tracker')
-    config.include('.minimap')
+    config.include('.reflector')

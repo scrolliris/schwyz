@@ -4,6 +4,7 @@ import os
 
 import pytest
 
+
 # pylint: disable=unused-import
 from pyramid.config import Configurator  # noqa
 from pyramid.request import Request  # noqa
@@ -142,4 +143,10 @@ def _app(raw_settings):  # type (dict) -> Router
 
 @pytest.fixture(scope='session')
 def dummy_app(_app, extra_environ):  # type (Router, dict) -> TestApp
-    return TestApp(_app, extra_environ=extra_environ)
+    from pyramid_services import find_service
+
+    app = TestApp(_app, extra_environ=extra_environ)
+    req = app.RequestClass
+    req.find_service = (lambda *args, **kwargs:
+                        find_service(req, *args, **kwargs))
+    return app

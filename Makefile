@@ -33,11 +33,11 @@ serve:
 # -- testing
 
 test:
-	ENV=test py.test -c 'config/testing.ini' -s -q
+	ENV=test py.test -c 'config/testing.ini' -q
 .PHONY: test
 
 test-cov:
-	ENV=test py.test -c 'config/testing.ini' -s -q --cov=${app} \
+	ENV=test py.test -c 'config/testing.ini' -q --cov=${app} \
 	  --cov-report term-missing:skip-covered
 .PHONY: test-cov
 
@@ -45,7 +45,7 @@ cov: | test-cov
 .PHONY: cov
 
 test-coverage:
-	ENV=test py.test -c 'config/testing.ini' -s -q --cov=${app} \
+	ENV=test py.test -c 'config/testing.ini' -q --cov=${app} \
 	  --cov-report term-missing \
 	  --cov-report html:tmp/coverage
 .PHONY: test-coverage

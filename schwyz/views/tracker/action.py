@@ -6,11 +6,11 @@ from schwyz.views import no_cache, tpl_dst
 from schwyz.services import IInitiator, IValidator
 
 
-@view_config(route_name='tracker',
-             renderer=tpl_dst('tracker-browser', 'js'),
+@view_config(route_name='measure',
+             renderer=tpl_dst('measure-browser', 'js'),
              request_method='GET')
-def tracker(req):
-    """Returns a tracker script for valid request."""
+def measure(req):
+    """Returns a measure script for valid request."""
     project_id = req.matchdict['project_id']
     api_key = req.params['api_key']
 
