@@ -63,19 +63,41 @@ def test_route_path_to_heatmap_minimap(dummy_request):
            'heatmap-minimap.css?api_key=123' == route_path
 
 
+def test_route_path_to_heatmap_overlay(dummy_request):
+    # js
+    route_path = dummy_request.route_path(
+        'heatmap_overlay',
+        project_id='PROJECT_ID',
+        ext='js',
+        _query={'api_key': '123'})
+
+    assert '/widget/v1.0/projects/PROJECT_ID/' \
+           'heatmap-overlay.js?api_key=123' == route_path
+
+    # css
+    route_path = dummy_request.route_path(
+        'heatmap_overlay',
+        project_id='PROJECT_ID',
+        ext='css',
+        _query={'api_key': '123'})
+
+    assert '/widget/v1.0/projects/PROJECT_ID/' \
+           'heatmap-overlay.css?api_key=123' == route_path
+
+
 def test_routing_to_measure(dummy_app):
     url = routing_to(service_name='script', path='measure.js')
     res = dummy_app.get(url, status=200)
     assert 200 == res.status_code
 
 
-def test_routing_to_hatmap(dummy_app):
+def test_routing_to_heatmap(dummy_app):
     url = routing_to(service_name='widget', path='heatmap.js')
     res = dummy_app.get(url, status=200)
     assert 200 == res.status_code
 
 
-def test_routing_to_hatmap_minimap(dummy_app):
+def test_routing_to_heatmap_minimap(dummy_app):
     # js
     url = routing_to(service_name='widget',
                      path='heatmap-minimap.js')
@@ -85,6 +107,20 @@ def test_routing_to_hatmap_minimap(dummy_app):
     # css
     url = routing_to(service_name='widget',
                      path='heatmap-minimap.css')
+    res = dummy_app.get(url, status=200)
+    assert 200 == res.status_code
+
+
+def test_routing_to_heatmap_overlay(dummy_app):
+    # js
+    url = routing_to(service_name='widget',
+                     path='heatmap-overlay.js')
+    res = dummy_app.get(url, status=200)
+    assert 200 == res.status_code
+
+    # css
+    url = routing_to(service_name='widget',
+                     path='heatmap-overlay.css')
     res = dummy_app.get(url, status=200)
     assert 200 == res.status_code
 

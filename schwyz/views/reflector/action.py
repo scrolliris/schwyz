@@ -22,6 +22,36 @@ def heatmap(req):
     return dict()
 
 
+def get_heatmap_builder(extension):
+    def response_builder(req):
+        # version 1.0
+        project_id = req.matchdict['project_id']
+        api_key = req.params['api_key']
+        ext = req.matchdict['ext']
+
+        validator = req.find_service(iface=IValidator, name='credential')
+        site_id = validator.site_id
+        if not site_id:
+            raise exc.HTTPInternalServerError()
+
+        initiator = req.find_service(iface=IInitiator, name='session')
+        token = initiator.provision(project_id=project_id, site_id=site_id,
+                                    api_key=api_key, context='read')
+        if not token:
+            logger.error('no token')
+            raise exc.HTTPInternalServerError()
+        # minified
+        result = render(tpl_dst('heatmap-' + extension, ext),
+                        dict(token=token), req)
+        res = Response(result)
+        res.content_type = 'text/{0:s}'.format(
+            'javascript' if ext == 'js' else 'css')
+        req.add_response_callback(no_cache)
+        return res
+
+    return response_builder
+
+
 @view_config(route_name='heatmap_minimap',
              request_method='GET')
 def heatmap_minimap(req):
@@ -29,26 +59,16 @@ def heatmap_minimap(req):
     if req.matchdict['ext'] not in ('js', 'css'):
         raise exc.HTTPForbidden()
 
-    # version 1.0
-    project_id = req.matchdict['project_id']
-    api_key = req.params['api_key']
-    ext = req.matchdict['ext']
+    builder_fn = get_heatmap_builder('minimap')
+    return builder_fn(req)
 
-    validator = req.find_service(iface=IValidator, name='credential')
-    site_id = validator.site_id
-    if not site_id:
-        raise exc.HTTPInternalServerError()
 
-    initiator = req.find_service(iface=IInitiator, name='session')
-    token = initiator.provision(project_id=project_id, site_id=site_id,
-                                api_key=api_key, context='read')
-    if not token:
-        logger.error('no token')
-        raise exc.HTTPInternalServerError()
-    # minified
-    result = render(tpl_dst('heatmap-minimap', ext), dict(token=token), req)
-    res = Response(result)
-    res.content_type = 'text/{0:s}'.format(
-        'javascript' if ext == 'js' else 'css')
-    req.add_response_callback(no_cache)
-    return res
+@view_config(route_name='heatmap_overlay',
+             request_method='GET')
+def heatmap_overlay(req):
+    """Returns a overlay type widget for valid request."""
+    if req.matchdict['ext'] not in ('js', 'css'):
+        raise exc.HTTPForbidden()
+
+    builder_fn = get_heatmap_builder('overlay')
+    return builder_fn(req)

@@ -63,6 +63,8 @@ gulp.task('distribute:widget', ['env'], function() {
     moduleDir + '/' + pkgName + '/dst/*-browser.min.js'
   , moduleDir + '/' + pkgName + '/dst/*-minimap.min.js'
   , moduleDir + '/' + pkgName + '/dst/*-minimap.min.css'
+  , moduleDir + '/' + pkgName + '/dst/*-overlay.min.js'
+  , moduleDir + '/' + pkgName + '/dst/*-overlay.min.css'
   ], {base: './'})
   .pipe(rename(function(file) {
     file.dirname = 'dst';
@@ -72,13 +74,6 @@ gulp.task('distribute:widget', ['env'], function() {
   }))
   .pipe(replace(/\|\|(\(o\.csrfToken=)""\);/, '\|\|$1"${token}"\);'))
   .pipe(gulp.dest('static'));
-  // -- overlay
-  // hreturn gulp.src([
-  //   moduleDir + '/' + pkgName + '/dst/*-browser.min.js'
-  // , moduleDir + '/' + pkgName + '/dst/*-overlay.min.js'
-  // , moduleDir + '/' + pkgName + '/dst/*-overlay.min.css'
-  // ], {base: './'})
-  // ...
 })
 
 gulp.task('distribute:all', ['env'], function() {
