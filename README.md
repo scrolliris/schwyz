@@ -1,10 +1,12 @@
-# Schwyz
+# Scrolliris Widget API
 
-`/ʃviːt͡s/`
+Code Name: `Schwyz /ʃviːt͡s/`
 
 [![pipeline status][pipeline]][commit] [![coverage report][coverage]][commit]
 
-
+[pipeline]: https://gitlab.com/scrolliris/scrolliris-widget-api/badges/master/pipeline.svg
+[coverage]: https://gitlab.com/scrolliris/scrolliris-widget-api/badges/master/coverage.svg
+[commit]: https://gitlab.com/scrolliris/scrolliris-widget-api/commits/master
 
 
 ```txt
@@ -21,7 +23,7 @@ Schwyz; SCript and Hosted Widget for You schwyZ
 
 ## Repository
 
-https://gitlab.com/scrolliris/schwyz
+https://gitlab.com/scrolliris/scrolliris-widget-api
 
 
 ## Requirements
@@ -178,7 +180,7 @@ It requires `docker`.
 ## License
 
 ```txt
-Schwyz
+Scrolliris Widget API
 Copyright (c) 2017 Lupine Software LLC
 ```
 
@@ -202,8 +204,3 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 ```
 
 See [LICENSE](LICENSE).
-
-
-[pipeline]: https://gitlab.com/scrolliris/schwyz/badges/master/pipeline.svg
-[coverage]: https://gitlab.com/scrolliris/schwyz/badges/master/coverage.svg
-[commit]: https://gitlab.com/scrolliris/schwyz/commits/master
