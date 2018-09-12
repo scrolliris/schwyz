@@ -28,10 +28,9 @@ https://gitlab.com/scrolliris/scrolliris-widget-api
 
 ## Requirements
 
-* Python `3.5.4`
-* Node.js `8.9.0` (build, npm `5.5.1`)
+* Python `3.5.5` (Python `2.7.14`)
+* Node.js `8.11.4` (build, npm `6.4.1`)
 * DynamoDB
-* Datastore
 
 
 ## Setup
@@ -44,12 +43,12 @@ https://gitlab.com/scrolliris/scrolliris-widget-api
 
 : node.js (e.g. nodeenv)
 (venv) % pip install nodeenv
-(venv) % nodeenv --python-virtualenv --with-npm --node=7.10.1
+(venv) % nodeenv --python-virtualenv --with-npm --node=8.11.4
 : re-activate for node.js at this time
 (venv) % source venv/bin/activate
-(venv) % npm install --global npm@5.2.0
+(venv) % npm install --global npm@6.4.1
 (venv) % npm --version
-5.2.0
+6.4.1
 ```
 
 ### Development
@@ -82,7 +81,6 @@ TODO
 
 ```zsh
 (venv) % ./bin/dynamodb_local
-(venv) % ./bin/datastore_local --project <PROJECT_ID> --clean
 ```
 
 ## Deployment

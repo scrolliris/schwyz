@@ -20,8 +20,9 @@ def measure(req):
         raise exc.HTTPInternalServerError()
 
     initiator = req.find_service(iface=IInitiator, name='session')
-    token = initiator.provision(project_id=project_id, site_id=site_id,
-                                api_key=api_key, context='write')
+    token = initiator.provision(
+        project_id=project_id, site_id=site_id, api_key=api_key, ctx='write')
+
     if not token:
         logger.error('no token')
         raise exc.HTTPInternalServerError()

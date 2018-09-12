@@ -13,7 +13,6 @@ with open(os.path.join(here, 'CHANGELOG')) as f:
 requires = [
     'boto3',
     'colorlog',
-    'google-cloud-datastore',
     'Paste',
     'PasteScript',
     'python-dotenv',
@@ -22,6 +21,7 @@ requires = [
     'pyramid_mako',
     'pyramid_services',
     'pytz',
+    'redis',
 ]
 
 if sys.version_info[0] < 3:  # python 2.7

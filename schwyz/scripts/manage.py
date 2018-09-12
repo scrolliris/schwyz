@@ -3,24 +3,9 @@ import os
 import sys
 
 import boto3
-
-try:
-    # TODO:
-    # Remove this, if this namespace issue is fixed.
-    # It's related to:
-    # * https://github.com/PyCQA/pylint/issues/1686
-    # * https://github.com/PyCQA/astroid/pull/460
-    #
-    # NOTE:
-    # A fix using `.pylintrc`
-    # init-hook='import sys; sys.path.append(
-    #     "venv27/lib/python2.7/site-packages/google/cloud/")'
-    from google.cloud import datastore
-except ImportError:
-    pass
-
 from pyramid.paster import get_appsettings, setup_logging
 from pyramid.scripts.common import parse_vars
+import redis
 
 from schwyz import resolve_env_vars
 from schwyz.env import load_dotenv_vars
@@ -84,24 +69,19 @@ class DbCli(object):
 
 class DsCli(object):
     def __init__(self, settings):
-        self.settings = settings
+        pool = redis.ConnectionPool.from_url(settings['store.url'])
+        self.client = redis.Redis(connection_pool=pool)
 
     def seed(self):
-        client = datastore.Client()
-        with client.transaction():
-            site_key = client.key(
-                self.settings['datastore.entity_kind'], '1-1')
-            obj = datastore.Entity(key=site_key)
-            # TODO
-            # this is static single record for development.
-            # use seeds yaml
-            obj.update({
-                'project_access_key_id': 'PROJECT_ID',
-                'site_id': '1',
-                'read_key': 'READ_KEY',
-                'write_key': 'WRITE_KEY',
-            })
-            client.put(obj)
+        # TODO
+        # this is static single record for development.
+        # use seeds yaml
+        return self.client.hmset('PROJECT_ID-1', {
+            'project_access_key_id': 'PROJECT_ID',
+            'site_id': '1',
+            'read_key': 'READ_KEY',
+            'write_key': 'WRITE_KEY',
+        })
 
 
 def main(argv=None):

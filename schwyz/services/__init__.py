@@ -8,22 +8,8 @@ import sys
 import uuid
 
 import boto3
+import redis
 from zope.interface import Interface
-
-try:
-    # TODO:
-    # Remove this, if this namespace issue is fixed.
-    # It's related to:
-    # * https://github.com/PyCQA/pylint/issues/1686
-    # * https://github.com/PyCQA/astroid/pull/460
-    #
-    # NOTE:
-    # A fix using `.pylintrc`
-    # init-hook='import sys; sys.path.append(
-    #     "venv27/lib/python2.7/site-packages/google/cloud/")'
-    from google.cloud import datastore
-except ImportError:
-    pass
 
 
 class IValidator(Interface):
@@ -70,21 +56,18 @@ class BaseDynamoDBServiceObject(object):
         self.table = self.db.Table(kwargs['table_name'])
 
 
-class BaseDatastoreServiceObject(object):
+class BaseRedisServiceObject(object):
     # pylint: disable=too-few-public-methods
-    def __init__(self, *_, **kwargs):
-        if kwargs['credentials']:
-            # https://google-cloud-python.readthedocs.io/en/latest/core/auth.html#service-accounts
-            self.client = datastore.Client.from_service_account_json(
-                kwargs['credentials'])
-        else:
-            self.client = datastore.Client()
-        self.kind = kwargs['kind']
+    def __init__(self, *args, **_kwargs):
+        req = args[0]
+        pool = redis.ConnectionPool.from_url(req.settings['store.url'])
+        self.client = redis.Redis(connection_pool=pool)
 
 
-class CredentialValidator(BaseDatastoreServiceObject):
+class CredentialValidator(BaseRedisServiceObject):
     def __init__(self, *args, **kwargs):
-        self.site = None
+        self.site_id = None
+
         if sys.version_info[0] > 3:
             # pylint: disable=missing-super-argument
             super().__init__(*args, **kwargs)
@@ -93,55 +76,25 @@ class CredentialValidator(BaseDatastoreServiceObject):
 
     @classmethod
     def options(cls, settings):
-        # credentials file must be in lib
-        credentials = ''
-        if settings['gcp.account_credentials']:
-            credentials = '{}/{}'.format(
-                os.path.dirname(__file__) + '/../../lib',
-                os.path.basename(settings['gcp.account_credentials']))
-        _options = {
-            'credentials': credentials,
-            'kind': settings['datastore.entity_kind'],
+        return {
+            'store.url': settings['store.url']
         }
-        if 'datastore.emulator_host' in settings and \
-           settings['datastore.emulator_host']:
-            _options['emulator_host'] = settings['datastore.emulator_host']
-        return _options
 
-    @property
-    def site_id(self):
-        site = self.site
-        if not isinstance(site, datastore.Entity):
-            return None
-        try:
-            return int(re.sub(r'^(\d*)-(\d*)$', r'\2', site.key.name))
-        except Exception as e:  # pylint: disable=broad-except
+    def validate(self, project_id='', api_key='', ctx='read'):
+        """Validates project_id and api_key."""
+        if ctx not in ('read', 'write'):
+            raise ContextError('invalid ctx {0:s}'.format(ctx))
+
+        name = '{}-{}'.format(project_id, ctx)
+        site_id = self.client.hget(name, api_key)
+
+        if site_id is None:
             logger = logging.getLogger(__name__)
-            logger.error('site_id is missing-> %s, site: %s', e, site)
-            return None
-
-    def validate(self, project_id='', api_key='', context='read'):
-        """Validates project_id (project_access_key_id) and api_key."""
-        if context not in ('read', 'write'):
-            raise ContextError('invalid context {0:s}'.format(context))
-
-        sites = []
-        try:
-            query = self.client.query(kind=self.kind)
-            query.add_filter('project_access_key_id', '=', project_id)
-            query.add_filter('{0:s}_key'.format(context), '=', api_key)
-            query.keys_only()
-            sites = list(query.fetch() or ())
-        except Exception as e:  # pylint: disable=broad-except
-            logger = logging.getLogger(__name__)
-            logger.error('session provisioning error -> %s', e)
-            return None
-
-        if len(sites) != 1:
+            logger.error('api_key is missing: %s', api_key)
             return False
 
-        # set site after view
-        self.site = sites[0]
+        # cache site_id for views
+        self.site_id = site_id.decode()
         return True
 
 
@@ -187,9 +140,9 @@ class SessionInitiator(BaseDynamoDBServiceObject):
         dt = datetime.datetime.now(tz=pytz.utc)
         return int(time.mktime(dt.timetuple()))
 
-    def provision(self, project_id='', site_id='', api_key='', context='read'):
-        if context not in ('read', 'write'):
-            raise ContextError('invalid context {0:s}'.format(context))
+    def provision(self, project_id='', site_id='', api_key='', ctx='read'):
+        if ctx not in ('read', 'write'):
+            raise ContextError('invalid ctx {0:s}'.format(ctx))
 
         token = self.__class__.generate_token()
         try:
@@ -198,7 +151,7 @@ class SessionInitiator(BaseDynamoDBServiceObject):
                 'initiated_at': self.__class__.generate_timestamp(),
                 'project_id': project_id,
                 'site_id': site_id,
-                'context': context,
+                'context': ctx,
                 'api_key': api_key,
             })
         except Exception as e:  # pylint: disable=broad-except

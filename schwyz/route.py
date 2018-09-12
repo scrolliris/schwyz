@@ -22,8 +22,8 @@ def credential_predicator(inf, req):
     """Validates `project_id` and `api_key` using CredentialValidator."""
     route_name = inf['route'].name
     valid_routes = (
-        'measure',  # context: write
-        'heatmap', 'heatmap_minimap', 'heatmap_overlay'  # context: read
+        'measure',  # ctx: write
+        'heatmap', 'heatmap_minimap', 'heatmap_overlay'  # ctx: read
     )
     if route_name in valid_routes:
         if 'api_key' not in req.params:
@@ -31,14 +31,14 @@ def credential_predicator(inf, req):
 
         project_id = inf['match']['project_id']
         api_key = req.params['api_key']
-        context = 'write' if route_name == 'measure' else 'read'
+        ctx = 'write' if route_name == 'measure' else 'read'
 
-        logger.info('project_id -> %s, api_key -> %s, context -> %s',
-                    project_id, api_key, context)
+        logger.info('project_id -> %s, api_key -> %s, ctx -> %s',
+                    project_id, api_key, ctx)
 
         validator = req.find_service(iface=IValidator, name='credential')
-        if not validator.validate(project_id=project_id, api_key=api_key,
-                                  context=context):
+        if not validator.validate(
+                project_id=project_id, api_key=api_key, ctx=ctx):
             logger.error('invalid credentials')
             raise exc.HTTPNotAcceptable()
 

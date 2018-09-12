@@ -36,7 +36,7 @@ def get_heatmap_builder(extension):
 
         initiator = req.find_service(iface=IInitiator, name='session')
         token = initiator.provision(project_id=project_id, site_id=site_id,
-                                    api_key=api_key, context='read')
+                                    api_key=api_key, ctx='read')
         if not token:
             logger.error('no token')
             raise exc.HTTPInternalServerError()

@@ -39,12 +39,10 @@ class Env(object):
             'wsgi.url_scheme': 'WSGI_URL_SCHEME',
             'aws.access_key_id': 'AWS_ACCESS_KEY_ID',
             'aws.secret_access_key': 'AWS_SECRET_ACCESS_KEY',
-            'gcp.account_credentials': 'GCP_ACCOUNT_CREDENTIALS',
             'dynamodb.endpoint_url': 'DYNAMODB_ENDPOINT_URL',
             'dynamodb.region_name': 'DYNAMODB_REGION_NAME',
             'dynamodb.table_name': 'DYNAMODB_TABLE_NAME',
-            'datastore.emulator_host': 'DATASTORE_EMULATOR_HOST',
-            'datastore.entity_kind': 'DATASTORE_ENTITY_KIND',
+            'store.url': 'STORE_URL',
         }
 
     def get(self, key, default=None):  # pylint: disable=no-self-use
